@@ -82,7 +82,7 @@ import Link from 'next/link';
                 </Link>
                 <Link
                   className=" max-w-sm inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
-                  href="/company"
+                  href="/order"
                 >
                   Orders
                   <svg
