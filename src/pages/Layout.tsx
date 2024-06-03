@@ -11,8 +11,10 @@ import {
   } from "konsta/react";
   import React from "react";
   import { FaHandHoldingUsd, FaBriefcase } from "react-icons/fa";
-  import { GiFarmer } from "react-icons/gi";
   import { IoIosHome } from "react-icons/io";
+  import { RiBillLine } from "react-icons/ri";
+  import { RxAvatar } from "react-icons/rx";
+  import { SiCoinmarketcap } from "react-icons/si";
   import { InjectedConnector } from "wagmi/connectors/injected";
   import { ConnectButton } from "@rainbow-me/rainbowkit";
   import Image from "next/image";
@@ -35,7 +37,7 @@ import Link from "next/link";
   
     return (
       <Page>
-        <div className="normalHeight">
+        <div className="normalHeight ">
           <div className=" flex items-center pr-2">
             {!hideConnectBtn && (
               <div className="w-full  conn mt-1 p-1">
@@ -64,13 +66,13 @@ import Link from "next/link";
               </span>
             </Link>
             <Link
-              href="/stake"
+              href="/market"
               type="button"
               className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
             >
-              <GiFarmer />
+            <SiCoinmarketcap />
               <span className="mt-1 text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-                Stake
+                Market
               </span>
             </Link>
             <Link
@@ -81,9 +83,9 @@ import Link from "next/link";
               {/* <svg className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                   <path stroke="currentColor" strokeLineCap="round" strokeLineJoin="round" strokeWidth="2" d="M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2"/>
               </svg> */}
-              <FaBriefcase />
+              <RiBillLine />
               <span className="mt-1 text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-                Company
+                Orders
               </span>
             </Link>
   
@@ -92,9 +94,9 @@ import Link from "next/link";
               type="button"
               className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
             >
-              <FaHandHoldingUsd />
+              <RxAvatar />
               <span className="mt-1 text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-                Loans
+                Profile
               </span>
             </Link>
           </div>
