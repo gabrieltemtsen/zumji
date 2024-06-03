@@ -10,7 +10,6 @@ import {
   Link,
   Icon,
 } from 'konsta/react';
-import { CameraFill, ArrowUpCircleFill } from 'framework7-icons/react';
 import { MdCameraAlt, MdSend } from 'react-icons/md';
 
 interface MessageData {
@@ -132,8 +131,8 @@ const MessagesPage: React.FC = () => {
     });
 
   return (
-    <Page className="ios:bg-white ios:dark:bg-black" ref={pageRef}>
-      <Navbar title="Messages" />
+    <Page className="ios:bg-white ios:dark:bg-black" >
+    <Navbar title="Messages" />
       <Messages>
         <MessagesTitle>{currentDate}</MessagesTitle>
         {messagesData.map((message, index) => (
@@ -160,12 +159,7 @@ const MessagesPage: React.FC = () => {
         onInput={(e) => setMessageText(e.target.value)}
         left={
           <Link onClick={() => console.log('click')} toolbar iconOnly>
-            <Icon
-              ios={<CameraFill className="w-7 h-7" />}
-              material={
-                <MdCameraAlt className="w-6 h-6 fill-black dark:fill-md-dark-on-surface" />
-              }
-            />
+           
           </Link>
         }
         right={
@@ -177,12 +171,7 @@ const MessagesPage: React.FC = () => {
               cursor: isClickable ? 'pointer' : 'default',
             }}
           >
-            <Icon
-              ios={<ArrowUpCircleFill className="w-7 h-7" />}
-              material={
-                <MdSend className="w-6 h-6 fill-black dark:fill-md-dark-on-surface" />
-              }
-            />
+           
           </Link>
         }
       />
