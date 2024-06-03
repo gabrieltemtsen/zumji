@@ -1,40 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Zumji - Decentralized Marketplace (peer to peer)
 
-## Getting Started
+## Overview:
 
-First, run the development server:
+Zumji is a decentralized marketplace built on the Celo  (Mainnet) that enables users to buy and sell digital items. The platform operates on a peer-to-peer structure, facilitating transactions directly between buyers and sellers. Funds are securely stored in the Zumji smart contract until the seller delivers or sends the item to the buyer, and the buyer confirms receipt of the product. Zumji also integrates a DAO (Decentralized Autonomous Organization) structure to manage disputes, ensuring fair and transparent resolution mechanisms.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technology Stack:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js:** Zumji's frontend is built using Next.js, a React framework for building web applications.
+- **KONSTA UI:** The user interface of Zumji is designed using KONSTA UI, providing a sleek and intuitive experience for users.
+- **Lighthouse Storage (IPFS):** Zumji utilizes IPFS (InterPlanetary File System) for decentralized storage of data and files, ensuring resilience and availability.
+- **Solidity:** Zumji's smart contracts are written in Solidity, the programming language for creating smart contracts on the Ethereum and Celo blockchains.
+- **Tailwind CSS:** Tailwind CSS is used for styling the user interface of Zumji, providing utility-first CSS classes for efficient and flexible design.
+  
+## Features:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+1. **Buying and Selling:** Users can easily buy and sell digital items on Zumji's platform.
+2. **Escrow System:** Funds are securely held in the Zumji smart contract until the buyer confirms receipt of the product, ensuring trust and security in transactions.
+3. **Peer-to-Peer Structure:** Zumji operates on a peer-to-peer structure, enabling direct interactions between buyers and sellers without intermediaries.
+4. **Dispute Resolution:** Zumji integrates a DAO structure to manage disputes, providing a decentralized mechanism for resolving conflicts and ensuring fairness in transactions.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Future Development:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- **Physical Items and Shipping:** Zumji plans to expand its offerings to include physical items and shipping services, broadening its scope and appeal to users.
+- **Enhanced User Experience:** Continual improvements will be made to the user interface and overall user experience of Zumji, ensuring a seamless and enjoyable marketplace experience.
+- **Integration with Additional Blockchain Platforms:** Zumji may explore integration with additional blockchain platforms to offer increased accessibility and interoperability for users.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+For any further questions or inquiries about Zumji, please feel free to reach out to our team. We are committed to providing a transparent and efficient marketplace experience for our users.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+*Note: This ReadMe provides a high-level overview of Zumji's features and technology stack. For detailed technical documentation and instructions, please refer to the respective repositories and documentation of the technologies used in the project.*
