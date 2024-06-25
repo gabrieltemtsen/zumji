@@ -7,9 +7,23 @@ module.exports = konstaConfig({
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'media', // or 'class'
-  theme: {
-    extend: {},
+   // or 'class'
+   theme: {
+    extend: {
+      colors: {
+        'yellow-gradient-start': '#FFD700',
+        'yellow-gradient-end': '#FFA500',
+      },
+      animation: {
+        'star-move': 'starMove 30s linear infinite',
+      },
+      keyframes: {
+        starMove: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-2000px)' },
+        },
+      },
+    },
   },
   variants: {
     extend: {},
