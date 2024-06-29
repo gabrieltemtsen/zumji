@@ -67,8 +67,53 @@ Zumji is a decentralized marketplace built on the Celo  (Mainnet) that enables u
 **Process**:
 1. Connect wallet.
 2. Convert Zumji points to cUSD.
-3. Receive cUSD in wallet.
+3. Receive cUSD in wallet.'
 
+
+
+## Installation
+
+To set up the Zumji project, follow these steps:
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/yourusername/zumji.git
+    ```
+
+2. **Navigate to the project directory:**
+
+    ```bash
+    cd zumji
+    ```
+
+3. **Set up the Next.js project with TypeScript:**
+
+    If you don't have `create-next-app` installed, you can install it globally:
+
+    ```bash
+    npm install -g create-next-app
+    ```
+
+4. **Create a new Next.js project with TypeScript:**
+
+    ```bash
+    npx create-next-app@latest . --ts
+    ```
+
+    This command initializes a new Next.js project with TypeScript in the current directory.
+
+5. **Install the dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+6. **Run the application:**
+
+    ```bash
+    npm run dev
+    ```
 
 ## Future Development:
 
