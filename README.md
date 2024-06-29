@@ -82,29 +82,3 @@ For any further questions or inquiries about Zumji, please feel free to reach ou
 
 
 
-
-
-
-## Technical Overview
-
-### Smart Contracts
-
-The Zumji platform is built using Solidity smart contracts on the Celo blockchain. Key components include:
-
-- **Onboarding**: A function that registers users on the platform with an initial zero Zumji points balance.
-- **Staking**: Functions to allow users to stake cUSD and earn Zumji points.
-- **Borrowing**: Functions to facilitate borrowing against staked cUSD, including repayment and interest calculation.
-- **Advertising**: Functions to handle ad fee payments and ad content management.
-- **Play to Earn**: Functions to manage the tapping game and allocate Zumji points.
-- **Gifting**: Functions to handle the transfer of Zumji points to other users via email.
-- **Redemption**: Functions to convert Zumji points back to cUSD.
-
-### Frontend Integration
-
-The frontend is built using Next.js, TypeScript, KonstaUI, and Tailwind CSS. Key elements include:
-
-- **User Interface**: A responsive UI with a gradient background and moving stars for a visually appealing experience.
-- **Navbar Component**: Customizable properties for a consistent look and feel.
-- **Wallet Integration**: Seamless integration with Celo wallets for connecting, staking, borrowing, and more.
-- **Interactive Elements**: A tapping game for earning Zumji points and ad display areas for traders' advertisements.
-- **Rewards System**: Real-time updates on Zumji points earned, staked amounts, and available balances.
