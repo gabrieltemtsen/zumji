@@ -104,7 +104,7 @@ const Index = () => {
   
   return (
     <Layout>
-      <Navbar title="Loans" />
+      <Navbar title="Zumji >> Profile" />
 
       <div className="m-5">
        
