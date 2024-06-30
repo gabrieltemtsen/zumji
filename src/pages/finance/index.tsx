@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { GiBriefcase } from "react-icons/gi";
+import { FaHandHoldingUsd } from "react-icons/fa";
 import {
   Page,
   Navbar,
@@ -126,12 +128,12 @@ const Index = () => {
    <div className="flex gap-2">
    <a href="#" className="inline-flex p-5 mt-3 gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
          {' '}
-        <FaCoins />
+         <GiBriefcase />
         Stake
     </a>
-    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white  rounded-lg focus:ring-4 focus:outline-none focus:ring-bg-gray-300 bg-gray-600 hover:bg-gray-700 focus:ring-gray-800">
          {' '}
-        <FaCoins />
+         <FaHandHoldingUsd />
         Unstake
     </a>
    </div>
@@ -148,7 +150,7 @@ const Index = () => {
         <span className=" font-bold  text-white">100,000</span>
         <span className=" font-medium text-gray-400">zumji</span>
     </h1>
-    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none bg-yellow-600hover:bg-yellow-700 focus:ring-yellow-800">
          {' '}
         <FaCoins />
         Redeem
