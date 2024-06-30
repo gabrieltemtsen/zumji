@@ -78,7 +78,7 @@ To set up the Zumji project, follow these steps:
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/zumji.git
+    git clone https://github.com/gabrieltemtsen/zumji
     ```
 
 2. **Navigate to the project directory:**
