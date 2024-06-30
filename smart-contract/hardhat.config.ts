@@ -1,9 +1,9 @@
-import { HardhatUserConfig } from "hardhat/config";
+// import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const config: HardhatUserConfig = {
+const config: any = {
   solidity: "0.8.24",
   networks: {
     alfajores: {
