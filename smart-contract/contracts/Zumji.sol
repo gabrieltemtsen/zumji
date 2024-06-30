@@ -26,8 +26,9 @@ contract Zumji {
     event ZumjiRedeemed(address indexed trader, uint256 amount);
     event Onboarded(address indexed trader);
 
-    constructor(IERC20 _cUSD) {
-        cUSD = _cUSD;
+    constructor() {
+       IERC20 cUSDs =  IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a) ;
+       cUSD = cUSDs;
         owner = msg.sender;
         interestRate = 5;
     }
