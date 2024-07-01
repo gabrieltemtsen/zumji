@@ -1,8 +1,8 @@
-# Zumji - Decentralized Marketplace (peer to peer)
+# Zumji - Blockchain-Enabled Financial and Marketing Platform for SMEs.
 
 ## Overview:
 
-Zumji is a decentralized marketplace built on the Celo  (Mainnet) that enables users to buy and sell digital items. The platform operates on a peer-to-peer structure, facilitating transactions directly between buyers and sellers. Funds are securely stored in the Zumji smart contract until the seller delivers or sends the item to the buyer, and the buyer confirms receipt of the product. Zumji also integrates a DAO (Decentralized Autonomous Organization) structure to manage disputes, ensuring fair and transparent resolution mechanisms.
+Zumji is a dynamic platform tailored for small and medium-sized enterprises (SMEs), built on the Celo blockchain. Zumji revolutionizes loyalty and rewards systems by enabling traders to stake, borrow, and earn rewards effortlessly. Traders can stake their cUSD to earn Zumji points, borrow cUSD against their staked amount, and post ads to reach a targeted audience. Users can participate in a fun tapping game to earn Zumji points, send points to others via email, and redeem their points for cUSD. Zumji's comprehensive features empower SMEs to save, earn rewards, and access liquidity for their business operations, fostering a thriving and engaged community.
 
 ## Technology Stack:
 
@@ -78,7 +78,7 @@ To set up the Zumji project, follow these steps:
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/zumji.git
+    git clone https://github.com/gabrieltemtsen/zumji
     ```
 
 2. **Navigate to the project directory:**
