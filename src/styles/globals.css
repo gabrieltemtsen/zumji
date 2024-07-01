@@ -80,3 +80,18 @@ body {
     text-wrap: balance;
   }
 }
+.button .normal {
+  display: block;
+}
+
+.button .press {
+  display: none;
+}
+
+.button:hover .press {
+  display: block;
+}
+
+.button:hover .normal {
+  display: none;
+}

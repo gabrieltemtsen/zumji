@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { GiBriefcase } from "react-icons/gi";
+import { FaHandHoldingUsd } from "react-icons/fa";
 import {
   Page,
   Navbar,
@@ -27,6 +29,8 @@ import Layout from "../Layout";
 import { FaWallet } from "react-icons/fa";
 import { FaMoneyCheckDollar, FaPeopleGroup } from "react-icons/fa6";
 import { useAccount } from "wagmi";
+import { IoMdArrowDropright } from "react-icons/io";
+import { FaCoins } from "react-icons/fa6";
 // import { shortenAddress } from "../../utils/shortenAddress";
 import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 // import {
@@ -100,68 +104,69 @@ const Index = () => {
   // };
 
   
-
   
   return (
     <Layout>
-      <Navbar title="Loans" />
+      <Navbar title={`Zumji >> Finance`} />
 
       <div className="m-5">
-        <BlockTitle> Request Loan </BlockTitle>
-
+        
         <Block>
-          <div className="max-w-sm mx-auto">
-            <div className="mb-5">
-              <label
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Your Company
-              </label>
-             
-            </div>
 
-            <div className="mb-5">
-              <label
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Loan Amount(cUsd)
-              </label>
-              <input
-                onChange={(e) => setLoanAmount(e.target.value)}
-                type="text"
-                id="text"
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                placeholder="100"
-                required
-              />
-            </div>
-            <div className="mb-5">
-              <label
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Reason
-              </label>
-              <input
-                onChange={(e) => setReason(e.target.value)}
-                type="text"
-                id="text"
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                placeholder="emergency"
-                required
-              />
-            </div>
 
-            {inTxn ? (
-              <Preloader className="center-item mt-3" />
-            ) : (
-              <button
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Apply for Loan
-              </button>
-            )}
-          </div>
+<div className="flex flex-wrap max-w-auto mx-auto gap-10">
+
+<div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+    <a href="#">
+        <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Your Stake  </h5>
+    </a>
+
+    <h1 className="flex flex-wrap sm:text-lg md:text-3xl">
+        <span className=" font-bold  text-white">10,000</span>
+        <span className=" font-medium text-gray-400">cUSD</span>
+    </h1>
+   <div className="flex gap-2">
+   <a href="#" className="inline-flex p-5 mt-3 gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+         {' '}
+         <GiBriefcase />
+        Stake
+    </a>
+    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white  rounded-lg focus:ring-4 focus:outline-none focus:ring-bg-gray-300 bg-gray-600 hover:bg-gray-700 focus:ring-gray-800">
+         {' '}
+         <FaHandHoldingUsd />
+        Unstake
+    </a>
+   </div>
+
+  
+</div>
+
+<div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+    <a href="#">
+        <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Total Points Earned</h5>
+    </a>
+
+    <h1 className="flex flex-wrap sm:text-lg md:text-3xl">
+        <span className=" font-bold  text-white">100,000</span>
+        <span className=" font-medium text-gray-400">zumji</span>
+    </h1>
+    <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none bg-yellow-600hover:bg-yellow-700 focus:ring-yellow-800">
+         {' '}
+        <FaCoins />
+        Redeem
+    </a>
+  
+</div>
+
+
+</div>
+
+
         </Block>
+
+
+
+  
 
      
 
