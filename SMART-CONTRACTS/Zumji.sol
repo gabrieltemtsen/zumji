@@ -8,27 +8,38 @@ contract Zumji {
 
     struct Trader {
         uint256 stakedAmount;
-        uint256 zumjiPoints; 
+        uint256 zumjiPoints;
+        uint256 stakeTimestamp;
         bool isOnboarded;
+    }
+
+    struct Advert {
+        address trader;
+        string cid;
     }
 
     mapping(address => Trader) public traders;
     mapping(address => uint256) public borrowedAmount;
+    Advert[] public adverts;
     uint256 public totalStaked;
     uint256 public totalBorrowed;
     uint256 public constant INTEREST_RATE = 10; // 10% interest rate
     uint256 public constant BORROW_RATIO = 2; // Must have staked at least 50% of the amount to borrow
     uint256 public constant ZUMJI_TO_CUSD_RATE = 100; // 100 Zumji points = 1 cUSD
+    uint256 public constant LOCK_PERIOD = 30 days; // 30 days lock period
+    uint256 public constant EARLY_UNSTAKE_PENALTY = 1e18; // 1 cUSD penalty for early unstaking
+    uint256 public constant AD_FEE = 1e18; // 1 cUSD fee for posting an ad
 
     event Staked(address indexed trader, uint256 amount);
+    event Unstaked(address indexed trader, uint256 amount, bool early);
     event Borrowed(address indexed trader, uint256 amount);
     event Repaid(address indexed trader, uint256 amount);
-    event AdPosted(address indexed trader, uint256 fee);
+    event AdPosted(address indexed trader, string cid);
     event ZumjiRedeemed(address indexed trader, uint256 amount);
     event Onboarded(address indexed trader);
 
     constructor() {
-        IERC20 cUSDs = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+        IERC20 cUSDs = IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
         cUSD = cUSDs;
         owner = msg.sender;
     }
@@ -49,6 +60,7 @@ contract Zumji {
         traders[msg.sender] = Trader({
             stakedAmount: 0,
             zumjiPoints: 0,
+            stakeTimestamp: 0,
             isOnboarded: true
         });
 
@@ -66,9 +78,39 @@ contract Zumji {
 
         traders[msg.sender].stakedAmount += amount;
         traders[msg.sender].zumjiPoints += amount / 10; // Example: 10 Zumji points per cUSD staked
+        traders[msg.sender].stakeTimestamp = block.timestamp;
         totalStaked += amount;
 
         emit Staked(msg.sender, amount);
+    }
+
+    function unstake(uint256 amount) external onlyOnboarded {
+        require(amount > 0, "Cannot unstake 0");
+        require(traders[msg.sender].stakedAmount >= amount, "Not enough staked amount");
+
+        bool early = block.timestamp < traders[msg.sender].stakeTimestamp + LOCK_PERIOD;
+        uint256 penalty = early ? EARLY_UNSTAKE_PENALTY : 0;
+        uint256 zumjiDeduction = early ? amount / 10 : 0;
+
+        if (penalty > 0) {
+            require(cUSD.balanceOf(msg.sender) >= penalty, "Insufficient cUSD for penalty");
+            cUSD.transferFrom(msg.sender, address(this), penalty);
+        }
+
+        traders[msg.sender].stakedAmount -= amount;
+        traders[msg.sender].zumjiPoints = traders[msg.sender].zumjiPoints >= zumjiDeduction ? traders[msg.sender].zumjiPoints - zumjiDeduction : 0;
+        totalStaked -= amount;
+        cUSD.transfer(msg.sender, amount);
+
+        emit Unstaked(msg.sender, amount, early);
+    }
+
+    function getStakedAmount(address _user) public view returns (uint256) {
+        return traders[_user].stakedAmount;
+    }
+
+    function getZumjiPoints(address _user) public view returns (uint256) {
+        return traders[_user].zumjiPoints;
     }
 
     function borrow(uint256 amount) external onlyOnboarded {
@@ -95,13 +137,18 @@ contract Zumji {
         emit Repaid(msg.sender, amount);
     }
 
-    function postAd(uint256 fee) external onlyOnboarded {
-        require(fee > 0, "Ad fee must be greater than 0");
+    function postAd(string memory cid) external onlyOnboarded {
+        require(bytes(cid).length > 0, "CID cannot be empty");
 
-        cUSD.transferFrom(msg.sender, address(this), fee);
+        require(cUSD.balanceOf(msg.sender) >= AD_FEE, "Insufficient cUSD for ad fee");
+        cUSD.transferFrom(msg.sender, address(this), AD_FEE);
 
-        // Logic to handle ad posting in the UI
-        emit AdPosted(msg.sender, fee);
+        adverts.push(Advert({
+            trader: msg.sender,
+            cid: cid
+        }));
+
+        emit AdPosted(msg.sender, cid);
     }
 
     function redeemZumji(uint256 points) external onlyOnboarded {

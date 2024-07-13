@@ -27,9 +27,9 @@ import { writeContract, readContract } from "@wagmi/core";
 
           const handleOnboard = async() => {
             try {
-              if(!address) {
-                return alert('Please connect your wallet');
-              }
+              console.log("ONBOARDING")
+              getIsOnboarded()
+          
 
               const { hash } = await writeContract({
                 address: ZUMJI_CONTRACT,
@@ -38,6 +38,7 @@ import { writeContract, readContract } from "@wagmi/core";
                 args: [],
               });
               getIsOnboarded()
+              
               
 
               
@@ -48,24 +49,26 @@ import { writeContract, readContract } from "@wagmi/core";
 
           const getIsOnboarded = async() => {
             try {
+              console.log(address)
               const isOnboarded: any = await readContract({
                 address: ZUMJI_CONTRACT,
                 abi: ZUMJI_ABI,
                 functionName: "isUserOnboarded",
                 args: [address],
               });
-              
+
+              console.log("ISONB: ",isOnboarded);
 
               setIsOnboarded(isOnboarded);
             } catch (error) {
-              console.log(error)
-              
+              console.log("ISONB: ",error);
             }
           }
-
           useEffect(() => {
-            getIsOnboarded
-          } , [ address ]);
+            getIsOnboarded()
+          } ,[ address ])
+
+       
 
           return (
             <Layout>
@@ -122,7 +125,7 @@ import { writeContract, readContract } from "@wagmi/core";
 
 <Link
 className=" mt-6 max-w-md w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
-href="/"
+href="/finance"
 >
 Zumji Stats
 <svg
@@ -143,7 +146,7 @@ Zumji Stats
 
                 ): (
                   <span
-                  className=" mt-6 max-w-md w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
+                  className=" mt-6 max-w-md cursor-pointer w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
                   onClick={handleOnboard}
                 >
                   Join Zumji
