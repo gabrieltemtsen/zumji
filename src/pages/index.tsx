@@ -14,8 +14,59 @@
         } from 'konsta/react';
 import Layout from './Layout';
 import Link from 'next/link';
+import { use, useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
+import { writeContract, readContract } from "@wagmi/core";
+
         
         export default function Home() {
+          const { address } = useAccount();
+
+          const [isOnboarded, setIsOnboarded] = useState(false);
+
+          const handleOnboard = async() => {
+            try {
+              if(!address) {
+                return alert('Please connect your wallet');
+              }
+
+              const { hash } = await writeContract({
+                address: ZUMJI_CONTRACT,
+                abi: ZUMJI_ABI,
+                functionName: "onboard",
+                args: [],
+              });
+              getIsOnboarded()
+              
+
+              
+            } catch (error) {
+              
+            }
+          }
+
+          const getIsOnboarded = async() => {
+            try {
+              const isOnboarded: any = await readContract({
+                address: ZUMJI_CONTRACT,
+                abi: ZUMJI_ABI,
+                functionName: "isUserOnboarded",
+                args: [address],
+              });
+              
+
+              setIsOnboarded(isOnboarded);
+            } catch (error) {
+              console.log(error)
+              
+            }
+          }
+
+          useEffect(() => {
+            getIsOnboarded
+          } , [ address ]);
+
           return (
             <Layout>
       <Navbar title="Zumji"  colors={{
@@ -67,9 +118,33 @@ import Link from 'next/link';
               </p>
               <div className="flex mb-8 align-center justify-center space-x-4 lg:mb-16 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
                 
-                <Link
+                {isOnboarded ? (
+
+<Link
+className=" mt-6 max-w-md w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
+href="/"
+>
+Zumji Stats
+<svg
+  className="w-2.5 h-2.5"
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  fill="none"
+>
+  <path
+    d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  />
+</svg>
+</Link>
+
+                ): (
+                  <span
                   className=" mt-6 max-w-md w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
-                  href="/"
+                  onClick={handleOnboard}
                 >
                   Join Zumji
                   <svg
@@ -86,7 +161,9 @@ import Link from 'next/link';
                       strokeLinecap="round"
                     />
                   </svg>
-                </Link>
+                </span>
+                )}
+                 
               </div>
             </div>
           </section>

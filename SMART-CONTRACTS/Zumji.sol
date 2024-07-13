@@ -5,10 +5,10 @@ import "./IERC20.sol";
 contract Zumji {
     IERC20 public cUSD;
     address public owner;
-    
+
     struct Trader {
         uint256 stakedAmount;
-        uint256 zumjiPoints;
+        uint256 zumjiPoints; 
         bool isOnboarded;
     }
 
@@ -16,7 +16,9 @@ contract Zumji {
     mapping(address => uint256) public borrowedAmount;
     uint256 public totalStaked;
     uint256 public totalBorrowed;
-    uint256 public interestRate; // Example: 5% annual interest
+    uint256 public constant INTEREST_RATE = 10; // 10% interest rate
+    uint256 public constant BORROW_RATIO = 2; // Must have staked at least 50% of the amount to borrow
+    uint256 public constant ZUMJI_TO_CUSD_RATE = 100; // 100 Zumji points = 1 cUSD
 
     event Staked(address indexed trader, uint256 amount);
     event Borrowed(address indexed trader, uint256 amount);
@@ -26,12 +28,11 @@ contract Zumji {
     event Onboarded(address indexed trader);
 
     constructor() {
-       IERC20 cUSDs =  IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a) ;
-       cUSD = cUSDs;
+        IERC20 cUSDs = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+        cUSD = cUSDs;
         owner = msg.sender;
-        interestRate = 5;
     }
-    
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
         _;
@@ -54,11 +55,15 @@ contract Zumji {
         emit Onboarded(msg.sender);
     }
 
+    function isUserOnboarded(address user) external view returns (bool) {
+        return traders[user].isOnboarded;
+    }
+
     function stake(uint256 amount) external onlyOnboarded {
         require(amount > 0, "Cannot stake 0");
 
         cUSD.transferFrom(msg.sender, address(this), amount);
-        
+
         traders[msg.sender].stakedAmount += amount;
         traders[msg.sender].zumjiPoints += amount / 10; // Example: 10 Zumji points per cUSD staked
         totalStaked += amount;
@@ -67,11 +72,10 @@ contract Zumji {
     }
 
     function borrow(uint256 amount) external onlyOnboarded {
-        require(traders[msg.sender].stakedAmount > 0, "Must stake cUSD to borrow");
-        require(amount <= traders[msg.sender].stakedAmount / 2, "Can only borrow up to 50% of staked amount");
+        require(traders[msg.sender].stakedAmount >= amount / BORROW_RATIO, "Must stake at least 50% of the amount to borrow");
 
         cUSD.transfer(msg.sender, amount);
-        
+
         borrowedAmount[msg.sender] += amount;
         totalBorrowed += amount;
 
@@ -81,9 +85,9 @@ contract Zumji {
     function repay(uint256 amount) external onlyOnboarded {
         require(borrowedAmount[msg.sender] >= amount, "Cannot repay more than borrowed");
 
-        uint256 interest = (amount * interestRate) / 100;
+        uint256 interest = (amount * INTEREST_RATE) / 100;
         cUSD.transferFrom(msg.sender, address(this), amount + interest);
-        
+
         borrowedAmount[msg.sender] -= amount;
         totalBorrowed -= amount;
         traders[msg.sender].zumjiPoints += amount / 20; // Example: 5 Zumji points per cUSD repaid
@@ -95,7 +99,7 @@ contract Zumji {
         require(fee > 0, "Ad fee must be greater than 0");
 
         cUSD.transferFrom(msg.sender, address(this), fee);
-        
+
         // Logic to handle ad posting in the UI
         emit AdPosted(msg.sender, fee);
     }
@@ -103,7 +107,7 @@ contract Zumji {
     function redeemZumji(uint256 points) external onlyOnboarded {
         require(traders[msg.sender].zumjiPoints >= points, "Not enough Zumji points");
 
-        uint256 cUSDAmount = points * 10; // Example: 1 Zumji point = 10 cUSD
+        uint256 cUSDAmount = points / ZUMJI_TO_CUSD_RATE; // Example: 100 Zumji points = 1 cUSD
         require(cUSD.balanceOf(address(this)) >= cUSDAmount, "Insufficient cUSD in contract");
 
         traders[msg.sender].zumjiPoints -= points;
