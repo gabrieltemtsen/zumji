@@ -31,13 +31,19 @@ import { writeContract, readContract } from "@wagmi/core";
               getIsOnboarded()
           
 
-              const { hash } = await writeContract({
+              const { hash  } = await writeContract({
                 address: ZUMJI_CONTRACT,
                 abi: ZUMJI_ABI,
                 functionName: "onboard",
                 args: [],
               });
-              getIsOnboarded()
+
+              if (hash) {
+                console.log("ONBOARDING")
+                getIsOnboarded();
+              }
+              
+              
               
               
 
@@ -48,6 +54,7 @@ import { writeContract, readContract } from "@wagmi/core";
           }
 
           const getIsOnboarded = async() => {
+            console.log(address)
             try {
               console.log(address)
               const isOnboarded: any = await readContract({

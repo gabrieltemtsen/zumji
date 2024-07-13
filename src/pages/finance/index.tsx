@@ -33,6 +33,7 @@ import { IoMdArrowDropright } from "react-icons/io";
 import { FaCoins } from "react-icons/fa6";
 // import { shortenAddress } from "../../utils/shortenAddress";
 import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
+import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 // import {
 //   FUSE_PAY_ABI,
 //   FUSE_PAY_MANAGER_ABI,
@@ -44,15 +45,9 @@ import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 const Index = () => {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
-  const [loanAmount, setLoanAmount] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
-  const [reason, setReason] = useState("");
-  const [userCompanies, setUserCompanies] = useState([]);
-  const [allAdmins, setAllAdmins] = useState([]);
-  const [adminCompanies, setAdminCompanies] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [stakedAmount, setStakedAmount] = useState(0);
+  const [zumjiBalance, setZumjiBalance] = useState(0);
 
-  const [loanRequests, setLoanRequests] = useState([]);
 
   // const requestLoan = async () => {
   //   try {
@@ -102,6 +97,27 @@ const Index = () => {
   //     console.log(error);
   //   }
   // };
+  const getBalances = async () => {
+    try {
+      const stakedAmount: any = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: "getStakedAmount",
+        args: [address],
+      });
+      setStakedAmount(stakedAmount);
+
+      const zumjiBalance: any = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: "getZumjiPoints",
+        args: [address],
+      });
+      setZumjiBalance(zumjiBalance);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   
   
@@ -121,8 +137,8 @@ const Index = () => {
         <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Your Stake  </h5>
     </a>
 
-    <h1 className="flex flex-wrap sm:text-lg md:text-3xl">
-        <span className=" font-bold  text-white">10,000</span>
+    <h1 className="flex flex-wrap sm:text-lg md:text-3xl gap-1">
+        <span className=" font-bold  text-white">{Number(stakedAmount)}</span>
         <span className=" font-medium text-gray-400">cUSD</span>
     </h1>
    <div className="flex gap-2">
@@ -146,8 +162,8 @@ const Index = () => {
         <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Total Points Earned</h5>
     </a>
 
-    <h1 className="flex flex-wrap sm:text-lg md:text-3xl">
-        <span className=" font-bold  text-white">100,000</span>
+    <h1 className="flex flex-wrap sm:text-lg md:text-3xl gap-1">
+        <span className=" font-bold  text-white">{Number(zumjiBalance)}</span>
         <span className=" font-medium text-gray-400">zumji</span>
     </h1>
     <a href="#" className="inline-flex p-5 mt-3  gap-1 items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none bg-yellow-600hover:bg-yellow-700 focus:ring-yellow-800">
