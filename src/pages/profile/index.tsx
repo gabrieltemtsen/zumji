@@ -7,6 +7,7 @@ import {
   Block,
   Button,
   Sheet,
+  Link,
   BlockTitle,
   Preloader,
 } from "konsta/react";
@@ -14,6 +15,7 @@ import Layout from "../Layout";
 import { useAccount } from "wagmi";
 import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
+import { useRouter } from "next/router";
 
 const Index = () => {
   const { address } = useAccount();
@@ -21,6 +23,8 @@ const Index = () => {
   const [username, setUsername] = useState(" ");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -45,6 +49,25 @@ const Index = () => {
   const handleUsernameChange = (event:any) => {
     setNewUsername(event.target.value);
   };
+  const getIsOnboarded = async () => {
+    try {
+      const isOnboarded: any = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: "isUserOnboarded",
+        args: [address],
+      });
+      setIsOnboarded(isOnboarded);
+    } catch (error) {
+      console.error("ISONB: ", error);
+    }
+  };
+
+  useEffect(() => {
+    
+      getIsOnboarded();
+    
+  }, [address]);
 
   const updateUsername = async () => {
     if (!newUsername) return;
@@ -65,6 +88,28 @@ const Index = () => {
       setInTxn(false);
     }
   };
+  if(!isOnboarded) {
+    return (
+      <Layout>
+        <Navbar title={`Zumji >> Finance`} />
+        <div className="m-5 h-full">
+          <Block>
+            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
+              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+                <Link onClick={()=>{router.push('/')}}>
+                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
+                </Link>
+           
+              </div>
+            </div>
+          </Block>
+          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+        </div>
+        
+      </Layout>
+    );
+  }
+
 
   return (
     <Layout>

@@ -41,6 +41,8 @@ const Index = () => {
   const { address } = useAccount();
   const router = useRouter();
   const [inTxn, setInTxn] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState(false);
+
   const [stakedAmount, setStakedAmount] = useState<any>(0);
   const [zumjiBalance, setZumjiBalance] = useState<any>(0);
   const [borrowedAmount, setBorrowedAmount] = useState<any>(0);
@@ -58,6 +60,25 @@ const Index = () => {
   useEffect(() => {
     getBalances();
   }, []);
+  const getIsOnboarded = async () => {
+    try {
+      const isOnboarded: any = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: "isUserOnboarded",
+        args: [address],
+      });
+      setIsOnboarded(isOnboarded);
+    } catch (error) {
+      console.error("ISONB: ", error);
+    }
+  };
+
+  useEffect(() => {
+    
+      getIsOnboarded();
+    
+  }, [address]);
   
   const getBalances = async () => {
     try {
@@ -75,7 +96,8 @@ const Index = () => {
         functionName: "getZumjiPoints",
         args: [address],
       });
-      setZumjiBalance(ethers.utils.formatEther(zumjiBalance));
+      console.log(zumjiBalance)
+      setZumjiBalance(Number(ethers.utils.formatEther(zumjiBalance)) / 1000000000000000); 
 
       const amountBorrowed: any = await readContract({
         address: ZUMJI_CONTRACT,
@@ -229,7 +251,27 @@ const Index = () => {
       setInTxn(false);
     }
   };
-
+  if(!isOnboarded) {
+    return (
+      <Layout>
+        <Navbar title={`Zumji >> Finance`} />
+        <div className="m-5 h-full">
+          <Block>
+            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
+              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+                <Link onClick={()=>{router.push('/')}}>
+                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
+                </Link>
+           
+              </div>
+            </div>
+          </Block>
+          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+        </div>
+        <ToastContainer />
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Navbar title={`Zumji >> Finance`} />

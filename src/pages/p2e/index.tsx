@@ -6,6 +6,7 @@ import {
   Navbar,
   Block,
   Button,
+  Link,
   Preloader,
 } from "konsta/react";
 import { useAccount } from "wagmi";
@@ -15,6 +16,7 @@ import Layout from "../Layout";
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from "next/router";
 
 const Index = () => {
   const { address } = useAccount();
@@ -23,6 +25,9 @@ const Index = () => {
   const [dailyClicks, setDailyClicks] = useState(0);
   const [zumjiPoints, setZumjiPoints] = useState(0);
   const [hasClaimed, setHasClaimed] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const router = useRouter()
+
 
   useEffect(() => {
     const fetchClaimStatus = async () => {
@@ -43,6 +48,26 @@ const Index = () => {
       fetchClaimStatus();
     }
   }, [address]);
+  const getIsOnboarded = async () => {
+    try {
+      const isOnboarded: any = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: "isUserOnboarded",
+        args: [address],
+      });
+      setIsOnboarded(isOnboarded);
+    } catch (error) {
+      console.error("ISONB: ", error);
+    }
+  };
+
+  useEffect(() => {
+    
+      getIsOnboarded();
+    
+  }, [address]);
+  
 
   useEffect(() => {
     const now = new Date();
@@ -86,6 +111,27 @@ const Index = () => {
       setInTxn(false);
     }
   };
+  if(!isOnboarded) {
+    return (
+      <Layout>
+        <Navbar title={`Zumji >> Finance`} />
+        <div className="m-5 h-full">
+          <Block>
+            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
+              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+                <Link onClick={()=>{router.push('/')}}>
+                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
+                </Link>
+           
+              </div>
+            </div>
+          </Block>
+          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+        </div>
+        <ToastContainer />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

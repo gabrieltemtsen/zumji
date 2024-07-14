@@ -1,7 +1,7 @@
-export const ZUMJI_CONTRACT="0x6D4Cd9AF71bDE4b113487dbAC905804D368689e9"
+export const ZUMJI_CONTRACT="0x634C2024026211537b265b4056d394037e41E4ed"
+//0x40224309b6a4317e8744D72aDD5117A2a3843d6d
 
-
-export const ZUMJI_ABI= [
+export const ZUMJI_ABI=[
   {
     "anonymous": false,
     "inputs": [
@@ -241,6 +241,19 @@ export const ZUMJI_ABI= [
   {
     "inputs": [],
     "name": "LOCK_PERIOD",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "POINTS_MULTIPLIER",
     "outputs": [
       {
         "internalType": "uint256",
@@ -586,7 +599,7 @@ export const ZUMJI_ABI= [
 // TESTNET : 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1
 // MAINNET : 0x765DE816845861e75A25fCA122bb6898B8B1282a
 export const USDT_CONTRACT_ADDRESS =
-  "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+  "0x765DE816845861e75A25fCA122bb6898B8B1282a";
 export const USDT_ABI = [
   {
     anonymous: false,
