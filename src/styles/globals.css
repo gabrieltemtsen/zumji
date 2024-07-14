@@ -64,6 +64,7 @@ body {
 .normalHeight {
   max-height: 94%;
   overflow-y: auto;
+  margin-bottom: 50px;
 }
 .center-item {
   display: flex;

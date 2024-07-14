@@ -13,6 +13,8 @@ import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Layout from "../Layout";
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Index = () => {
   const { address } = useAccount();
@@ -76,8 +78,10 @@ const Index = () => {
       await waitForTransaction({ hash });
       setClicks(0);
       setHasClaimed(true);
+      toast.success("Claim successful!");
     } catch (error) {
       console.error(error);
+      toast.error("Claim failed!");
     } finally {
       setInTxn(false);
     }
@@ -102,22 +106,26 @@ const Index = () => {
                   className="w-40 object-cover rounded-2xl h-36 mb-2"
                 />
               </div>
-              <h1 className="text-black text-lg font-bold">Press to Earn</h1>
+              <h1 className="text-black text-lg font-bold">Tap to Earn</h1>
             </button>
             <span className="text-2xl text-black font-bold m-5 p-5">
               ZUMJI POINTS: {zumjiPoints}
             </span>
           </Block>
 
-          <Button
-            className="my-5"
-            onClick={handleClaim}
-            disabled={clicks < 100 || inTxn || hasClaimed}
-          >
-            {inTxn ? <Preloader /> : "Claim Points"}
-          </Button>
+          {inTxn ? (<Preloader className="center-item mt-3" />) : (
+            <Button
+              className="my-5 bg-gray-900"
+              onClick={handleClaim}
+              outline
+              disabled={clicks < 100 || inTxn || hasClaimed}
+            >
+              <span className="text-white">Claim Points</span>
+            </Button>
+          )}
+
           {hasClaimed && (
-            <span className="text-red-500">
+            <span className="text-red-800">
               You have already claimed your points for today. Please come back tomorrow.
             </span>
           )}
@@ -207,6 +215,7 @@ const Index = () => {
           </SwiperSlide>
         </Swiper>
       </div>
+      <ToastContainer />
     </Layout>
   );
 };

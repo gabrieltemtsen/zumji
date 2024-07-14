@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
+
 import "./IERC20.sol";
 
 contract Zumji {
-    IERC20 public cUSD;
-    address public owner;
-
     struct Trader {
         uint256 stakedAmount;
         uint256 zumjiPoints;
         uint256 stakeTimestamp;
         bool isOnboarded;
+        string username;
+        uint256 lastClaimTimestamp;
     }
 
     struct Advert {
@@ -29,6 +29,7 @@ contract Zumji {
     uint256 public constant LOCK_PERIOD = 30 days; // 30 days lock period
     uint256 public constant EARLY_UNSTAKE_PENALTY = 1e18; // 1 cUSD penalty for early unstaking
     uint256 public constant AD_FEE = 1e18; // 1 cUSD fee for posting an ad
+    uint256 public constant DAILY_CLAIM_POINTS = 100; // 100 Zumji points per day for P2E game
 
     event Staked(address indexed trader, uint256 amount);
     event Unstaked(address indexed trader, uint256 amount, bool early);
@@ -37,17 +38,8 @@ contract Zumji {
     event AdPosted(address indexed trader, string cid);
     event ZumjiRedeemed(address indexed trader, uint256 amount);
     event Onboarded(address indexed trader);
-
-    constructor() {
-        IERC20 cUSDs = IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
-        cUSD = cUSDs;
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
-        _;
-    }
+    event UsernameUpdated(address indexed trader, string username);
+    event PointsClaimed(address indexed trader, uint256 points);
 
     modifier onlyOnboarded() {
         require(traders[msg.sender].isOnboarded, "User not onboarded");
@@ -61,7 +53,9 @@ contract Zumji {
             stakedAmount: 0,
             zumjiPoints: 0,
             stakeTimestamp: 0,
-            isOnboarded: true
+            isOnboarded: true,
+            username: "Zumji OG",
+            lastClaimTimestamp: 0
         });
 
         emit Onboarded(msg.sender);
@@ -71,10 +65,20 @@ contract Zumji {
         return traders[user].isOnboarded;
     }
 
-    function stake(uint256 amount) external onlyOnboarded {
-        require(amount > 0, "Cannot stake 0");
+    function getUsername(address user) external view returns (string memory) {
+        return traders[user].username;
+    }
 
-        cUSD.transferFrom(msg.sender, address(this), amount);
+    function updateUsername(string calldata newUsername) external onlyOnboarded {
+        traders[msg.sender].username = newUsername;
+        emit UsernameUpdated(msg.sender, newUsername);
+    }
+
+    function stake(uint256 amount) external onlyOnboarded {
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
+
+        require(amount > 0, "Cannot stake 0");
+        require(cUSD.transferFrom(msg.sender, address(this), amount), "Deposit failed");
 
         traders[msg.sender].stakedAmount += amount;
         traders[msg.sender].zumjiPoints += amount / 10; // Example: 10 Zumji points per cUSD staked
@@ -85,6 +89,8 @@ contract Zumji {
     }
 
     function unstake(uint256 amount) external onlyOnboarded {
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
+
         require(amount > 0, "Cannot unstake 0");
         require(traders[msg.sender].stakedAmount >= amount, "Not enough staked amount");
 
@@ -114,6 +120,8 @@ contract Zumji {
     }
 
     function borrow(uint256 amount) external onlyOnboarded {
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);  //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+
         require(traders[msg.sender].stakedAmount >= amount / BORROW_RATIO, "Must stake at least 50% of the amount to borrow");
 
         cUSD.transfer(msg.sender, amount);
@@ -125,6 +133,8 @@ contract Zumji {
     }
 
     function repay(uint256 amount) external onlyOnboarded {
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);  //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+
         require(borrowedAmount[msg.sender] >= amount, "Cannot repay more than borrowed");
 
         uint256 interest = (amount * INTEREST_RATE) / 100;
@@ -138,10 +148,12 @@ contract Zumji {
     }
 
     function postAd(string memory cid) external onlyOnboarded {
-        require(bytes(cid).length > 0, "CID cannot be empty");
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
 
+        require(bytes(cid).length > 0, "CID cannot be empty");
         require(cUSD.balanceOf(msg.sender) >= AD_FEE, "Insufficient cUSD for ad fee");
         cUSD.transferFrom(msg.sender, address(this), AD_FEE);
+
 
         adverts.push(Advert({
             trader: msg.sender,
@@ -152,6 +164,8 @@ contract Zumji {
     }
 
     function redeemZumji(uint256 points) external onlyOnboarded {
+        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+
         require(traders[msg.sender].zumjiPoints >= points, "Not enough Zumji points");
 
         uint256 cUSDAmount = points / ZUMJI_TO_CUSD_RATE; // Example: 100 Zumji points = 1 cUSD
@@ -161,5 +175,22 @@ contract Zumji {
         cUSD.transfer(msg.sender, cUSDAmount);
 
         emit ZumjiRedeemed(msg.sender, cUSDAmount);
+    }
+
+    function claimDailyPoints() external onlyOnboarded {
+        require(block.timestamp >= traders[msg.sender].lastClaimTimestamp + 1 days, "Can only claim once per day");
+
+        traders[msg.sender].zumjiPoints += 100;
+        traders[msg.sender].lastClaimTimestamp = block.timestamp;
+
+        emit PointsClaimed(msg.sender, DAILY_CLAIM_POINTS);
+    }
+
+    function hasClaimedToday(address user) external view returns (bool) {
+        return block.timestamp < traders[user].lastClaimTimestamp + 1 days;
+    }
+
+    receive() external payable {
+        // Handle the received Ether 
     }
 }

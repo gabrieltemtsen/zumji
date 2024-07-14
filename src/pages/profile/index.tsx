@@ -18,7 +18,7 @@ import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 const Index = () => {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
-  const [username, setUsername] = useState("Zumji OG");
+  const [username, setUsername] = useState(" ");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
 
@@ -74,7 +74,7 @@ const Index = () => {
           <div className="max-w-sm mx-auto">
             <div className="mb-5">
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Welcome Back
+                {/* Welcome Back, {address} */}
               </label>
             </div>
             <div className="w-full max-w-sm rounded-lg shadow bg-gray-800 border-gray-700">
@@ -132,19 +132,21 @@ const Index = () => {
       <Sheet
         opened={isSheetOpen}
         onBackdropClick={() => setIsSheetOpen(false)}
-        
+        className={`pb-safe  ${isSheetOpen ? 'relative max-w-md': 'mb-5'}`}
       >
         <Block>
-          <BlockTitle>Edit Username</BlockTitle>
-          <input
-            type="text"
-            placeholder="New username"
-            value={newUsername}
-            onChange={handleUsernameChange}
-          />
-          <Button onClick={updateUsername} disabled={inTxn}>
-            {inTxn ? <Preloader /> : "Update Username"}
+          <div className="mb-5 w-full max-w-md">
+      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter New Username</label>
+      <input onChange={handleUsernameChange} type="text" id="text" className="shadow-sm bg-gray-50 border border-gray-300 mt-1 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Lena.eth" required />
+    </div>
+    {
+      inTxn ? (<Preloader  className="center-item mt-3"/>) : (
+        <Button onClick={updateUsername} disabled={inTxn}>
+            Update Username
           </Button>
+      )
+    }
+          
         </Block>
       </Sheet>
     </Layout>
