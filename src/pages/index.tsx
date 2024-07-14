@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { use, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
-import { writeContract, readContract } from "@wagmi/core";
+import { writeContract, readContract,waitForTransaction } from "@wagmi/core";
 
         
         export default function Home() {
@@ -31,12 +31,13 @@ import { writeContract, readContract } from "@wagmi/core";
               getIsOnboarded()
           
 
-              const { hash  } = await writeContract({
+              const tx = await writeContract({
                 address: ZUMJI_CONTRACT,
                 abi: ZUMJI_ABI,
                 functionName: "onboard",
                 args: [],
               });
+              const hash  = await waitForTransaction(tx);
 
               if (hash) {
                 console.log("ONBOARDING")
