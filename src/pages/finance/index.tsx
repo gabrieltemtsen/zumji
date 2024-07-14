@@ -47,6 +47,7 @@ const Index = () => {
   const [stakeAmount, setStakeAmount] = useState("");
   const [borrowAmount, setBorrowAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
+  const EARLY_UNSTAKING_FEE = 1;
 
   useEffect(() => {
     getBalances();
@@ -82,7 +83,7 @@ const Index = () => {
       setInTxn(true);
 
       const ToApprove = ethers.utils.parseEther(stakeAmount);
-      console.log(Number(ToApprove));
+
       const { hash } = await writeContract({
         address: USDT_CONTRACT_ADDRESS,
         abi: USDT_ABI,
@@ -110,17 +111,30 @@ const Index = () => {
 
   const handleUnStake = async () => {
     if (!unstakeAmount) return alert("Please enter a valid amount to unstake");
-    const amountInWei = ethers.utils.parseEther(unstakeAmount.toString());
-    const _amount = amountInWei.toString();
+
 
     
     try {
       setInTxn(true);
+
+      const ToApprove = ethers.utils.parseEther(unstakeAmount);
+      const amountWithFeeForApproval = Number(unstakeAmount) + EARLY_UNSTAKING_FEE;
+      const aprroveWithFee = ethers.utils.parseEther(amountWithFeeForApproval.toString());
+
+    
+      const { hash } = await writeContract({
+        address: USDT_CONTRACT_ADDRESS,
+        abi: USDT_ABI,
+        functionName: "approve",
+        args: [ZUMJI_CONTRACT, aprroveWithFee],
+      });
+      const receipt = await waitForTransaction({ hash });
+
       const tx = await writeContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
         functionName: "unstake",
-        args: [_amount],
+        args: [ToApprove],
       });
       await waitForTransaction(tx);
       getBalances();

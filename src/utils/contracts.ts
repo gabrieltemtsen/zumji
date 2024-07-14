@@ -1,4 +1,4 @@
-export const ZUMJI_CONTRACT="0xB05a53d6FF686276125d5A7eB52845b22caF64d9"
+export const ZUMJI_CONTRACT="0x103AC0fBb681775331B1A03643e21844B5d85512"
 
 
 export const ZUMJI_ABI= [
@@ -51,6 +51,25 @@ export const ZUMJI_ABI= [
       }
     ],
     "name": "Onboarded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "trader",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "points",
+        "type": "uint256"
+      }
+    ],
+    "name": "PointsClaimed",
     "type": "event"
   },
   {
@@ -127,6 +146,25 @@ export const ZUMJI_ABI= [
       },
       {
         "indexed": false,
+        "internalType": "string",
+        "name": "username",
+        "type": "string"
+      }
+    ],
+    "name": "UsernameUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "trader",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -151,6 +189,19 @@ export const ZUMJI_ABI= [
   {
     "inputs": [],
     "name": "BORROW_RATIO",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DAILY_CLAIM_POINTS",
     "outputs": [
       {
         "internalType": "uint256",
@@ -270,6 +321,13 @@ export const ZUMJI_ABI= [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "claimDailyPoints",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -292,6 +350,25 @@ export const ZUMJI_ABI= [
     "inputs": [
       {
         "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getUsername",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_user",
         "type": "address"
       }
@@ -302,6 +379,25 @@ export const ZUMJI_ABI= [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "hasClaimedToday",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -440,6 +536,16 @@ export const ZUMJI_ABI= [
         "internalType": "bool",
         "name": "isOnboarded",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "username",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastClaimTimestamp",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -459,10 +565,24 @@ export const ZUMJI_ABI= [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "newUsername",
+        "type": "string"
+      }
+    ],
+    "name": "updateUsername",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "stateMutability": "payable",
     "type": "receive"
   }
 ]
+
 // TESTNET : 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1
 // MAINNET : 0x765DE816845861e75A25fCA122bb6898B8B1282a
 export const USDT_CONTRACT_ADDRESS =

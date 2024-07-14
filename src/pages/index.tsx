@@ -22,11 +22,13 @@ import { writeContract, readContract,waitForTransaction } from "@wagmi/core";
         
         export default function Home() {
           const { address } = useAccount();
+          const [inTxn, setInTxn] = useState(false);
 
           const [isOnboarded, setIsOnboarded] = useState(false);
 
           const handleOnboard = async() => {
             try {
+              setInTxn(true);
               console.log("ONBOARDING")
               getIsOnboarded()
           
@@ -39,17 +41,14 @@ import { writeContract, readContract,waitForTransaction } from "@wagmi/core";
               });
               const hash  = await waitForTransaction(tx);
 
-              if (hash) {
+              
                 console.log("ONBOARDING")
                 getIsOnboarded();
-              }
-              
-              
-              
-              
-
+                setInTxn(false);
               
             } catch (error) {
+              console.log("ONBOARDING ERR",error);
+              setInTxn(false);
               
             }
           }
@@ -157,21 +156,29 @@ Zumji Stats
                   className=" mt-6 max-w-md cursor-pointer w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
                   onClick={handleOnboard}
                 >
-                  Join Zumji
-                  <svg
-                    className="w-2.5 h-2.5"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                  >
-                    <path
-                      d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  {inTxn ? (
+                     <Preloader className="center-item mt-3" /> 
+                    ) : ( 
+                      <>
+                       Join Zumji
+                      <svg
+                        className="w-2.5 h-2.5"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
+                        <path
+                          d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      </>
+                     
+                      )}
+                 
                 </span>
                 )}
                  
