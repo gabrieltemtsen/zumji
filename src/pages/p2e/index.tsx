@@ -17,6 +17,7 @@ import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 const Index = () => {
   const { address } = useAccount();
@@ -27,7 +28,7 @@ const Index = () => {
   const [hasClaimed, setHasClaimed] = useState(false);
   const [isOnboarded, setIsOnboarded] = useState(false);
   const router = useRouter()
-
+  const pathName = usePathname();
 
   useEffect(() => {
     const fetchClaimStatus = async () => {

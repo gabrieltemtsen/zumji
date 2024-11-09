@@ -7,10 +7,12 @@ module.exports = konstaConfig({
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-   // or 'class'
-   theme: {
+  // or 'class'
+  theme: {
     extend: {
+      // colors: appColors,
       colors: {
+        'primary': 'red',
         'yellow-gradient-start': '#FFD700',
         'yellow-gradient-end': '#FFA500',
       },
