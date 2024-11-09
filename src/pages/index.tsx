@@ -10,6 +10,7 @@ import {
   BlockTitle,
   Preloader,
   Chip,
+  Icon,
 } from 'konsta/react';
 import Layout from './Layout';
 import Link from 'next/link';
@@ -18,6 +19,8 @@ import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
 import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaCalendar, FaChevronRight } from "react-icons/fa";
+import { IoMdToday } from "react-icons/io";
 
 export default function Home() {
   const { address } = useAccount();
@@ -66,14 +69,8 @@ export default function Home() {
 
   return (
     <Layout>
-      <Navbar title="Zumji" colors={{
-        bgIos: 'bg-black',
-        bgMaterial: 'bg-black',
-        textIos: 'text-white',
-        textMaterial: 'text-white',
-      }} />
       <div className="h-full">
-        <section className="bg-gradient-to-b from-yellow-700/[4.79] via-yellow-800 h-full">
+        <section className="bg-gradient-to-b from-primary via-yellow-800 h-full">
           <div className="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
             <a
               href="https://celo.org"
@@ -109,7 +106,7 @@ export default function Home() {
               Transform Your Business with Zumji: Loyalty, Rewards, and More
             </h1>
             <p className="mb-8 text-lg font-normal text-white lg:text-xl sm:px-16 xl:px-48 ">
-              Empowering SMEs with Staking, Borrowing, and Innovative Rewards on Celo 
+              Empowering SMEs with Staking, Borrowing, and Innovative Rewards on Celo
             </p>
             <div className="flex mb-8 align-center justify-center space-x-4 lg:mb-16 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
               {isOnboarded ? (
@@ -135,28 +132,18 @@ export default function Home() {
                 </Link>
               ) : (
                 <span
-                  className=" mt-6 max-w-md cursor-pointer w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
+                  className=" mt-6 max-w-md cursor-pointer w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-yellow-700 hover:bg-yellow-800 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
                   onClick={handleOnboard}
                 >
                   {inTxn ? (
-                    <Preloader className="center-item mt-3" /> 
+                    <Preloader className="center-item mt-3" />
                   ) : (
                     <>
                       Join Zumji
-                      <svg
-                        className="w-2.5 h-2.5"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
+                      <Icon
+                        ios={<FaChevronRight className="w-4 h-4" />}
+                        material={<FaChevronRight className="w-4 h-4" />}
+                      />
                     </>
                   )}
                 </span>

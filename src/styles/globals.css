@@ -1,10 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
-
-
+@import "./theme/palette.css";
 
 body {
   margin: 0;
