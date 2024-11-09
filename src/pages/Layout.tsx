@@ -24,6 +24,7 @@ import { getAccount } from "@wagmi/core";
 import Link from "next/link";
 import { finance, home, p2e, profile } from "@/constants/urls/urls";
 import { usePathname } from "next/navigation";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 
 const Layout = ({ children }: any) => {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
@@ -44,12 +45,13 @@ const Layout = ({ children }: any) => {
         <Navbar
           title="Zumji"
           right={
-            <ConnectButton
-              showBalance={{
-                smallScreen: true,
-                largeScreen: false,
-              }}
-            />
+            <CustomConnectButton />
+            // <ConnectButton
+            //   showBalance={{
+            //     smallScreen: true,
+            //     largeScreen: false,
+            //   }}
+            // />
           }
           colors={{
             bgIos: 'bg-black',

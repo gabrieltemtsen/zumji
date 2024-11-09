@@ -1,6 +1,3 @@
-// import { appTheme } from "@/styles/theme/theme";
-const appTheme = require('./src/styles/theme/theme');
-
 const konstaConfig = require('konsta/config');
 
 // wrap config with konstaConfig config
@@ -12,9 +9,10 @@ module.exports = konstaConfig({
   ],
   // or 'class'
   theme: {
-    ...appTheme,
     extend: {
+      // colors: appColors,
       colors: {
+        'primary': 'red',
         'yellow-gradient-start': '#FFD700',
         'yellow-gradient-end': '#FFA500',
       },

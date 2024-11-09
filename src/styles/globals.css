@@ -1,7 +1,7 @@
+@import "./theme/palette.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./theme/palette.css";
 
 body {
   margin: 0;
@@ -20,8 +20,6 @@ body {
   background-size: cover;
   z-index: -1; /* Ensure it’s behind all content */
 }
-
-
 
 @keyframes starMove {
   from {
