@@ -11,14 +11,14 @@ import {
   Preloader,
   Chip,
   Icon,
-} from 'konsta/react';
-import Layout from './Layout';
-import Link from 'next/link';
-import { useAccount } from 'wagmi';
-import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
+} from "konsta/react";
+import Layout from "./Layout";
+import Link from "next/link";
+import { useAccount } from "wagmi";
+import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FaChevronRight } from "react-icons/fa";
 import AnimateFromLeft from "@/animation/animate-from-left";
 import AnimateFromRight from "@/animation/animate-from-right";
@@ -72,32 +72,28 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="h-[90vh]"
+      <div
+        className="h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${homeBackground})` }}
       >
-        <section
-          className="bg-gradient-to-b from-yellow-700/[4.79] via-yellow-800 h-full"
-
-        >
-          <div className={`max-w-screen-xl  px-4 py-8 mx-auto text-center  lg:py-16 lg:px-12`}
-
-          >
+        <section className="bg-gradient-to-b from-yellow-700/[4.79] via-yellow-800 h-full">
+          <div className="max-w-screen-xl px-4 py-8 mx-auto text-center md:py-16 md:px-8">
             <a
               href="https://celo.org"
               target="_blank"
-              className="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm  rounded-full mb-7 bg-gray-800 text-white hover:bg-gray-200 hover:bg-gray-700"
+              className="inline-flex items-center justify-between px-3 py-2 pr-4 text-sm rounded-full mb-7 bg-gray-800 text-white hover:bg-gray-700"
               role="alert"
             >
               <Chip
                 media={
                   <img
                     alt="celo"
-                    className="ios:h-7 material:h-6 rounded-full"
+                    className="h-6 w-6 rounded-full"
                     src="/celo.png"
                   />
                 }
                 className="text-xs bg-black rounded-full text-white px-4 py-1.5 mr-3"
-              />{" "}
+              />
               <span className="text-sm font-medium ml-2">Powered by Celo</span>
               <svg
                 className="w-5 h-5 ml-2"
@@ -113,32 +109,32 @@ export default function Home() {
               </svg>
             </a>
             <AnimateFromRight>
-              <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight *:md:text-5xl lg:text-6xl text-white">
+              <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight md:text-4xl lg:text-5xl text-white">
                 Transform Your Business with Zumji: Loyalty, Rewards, and More
               </h1>
             </AnimateFromRight>
             <AnimateFromLeft>
-              <p className="mb-8 text-lg font-normal text-white lg:text-xl sm:px-16 xl:px-48 ">
-                Empowering SMEs with Staking, Borrowing, and Innovative Rewards on Celo
+              <p className="mb-8 text-base font-normal text-white md:text-lg lg:text-xl sm:px-6 md:px-12">
+                Empowering SMEs with Staking, Borrowing, and Innovative Rewards
+                on Celo
               </p>
             </AnimateFromLeft>
             <AnimateFromBottom>
-              <div className="flex mb-8 align-center justify-center space-x-4 lg:mb-16 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col items-center space-y-4 md:flex-row md:space-x-4 md:space-y-0">
                 {isOnboarded ? (
                   <Link
-                    className=" mt-6 max-w-md w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-gray-600 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
+                    className="mt-4 max-w-full w-auto px-6 py-3 bg-gray-600 text-white text-sm font-medium rounded-full shadow hover:shadow-lg focus:ring-2 focus:ring-yellow-600"
                     href="/finance"
                   >
                     Zumji Stats
                     <svg
-                      className="w-2.5 h-2.5"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
+                      className="w-4 h-4 inline-block ml-1"
                       fill="none"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14"
+                        d="M5.279 2L10.926 7.646c.195.195.195.512 0 .707L5.279 14"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
@@ -146,22 +142,23 @@ export default function Home() {
                     </svg>
                   </Link>
                 ) : (
-                  <span
-                    className=" mt-6 max-w-md cursor-pointer w-3/3 inline-flex justify-center items-center gap-x-1 text-center bg-yellow-700 hover:bg-yellow-800 shadow-2xl shadow-transparent hover:shadow-black-700/50 border border-transparent text-white text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-white py-3 px-6 dark:focus:ring-offset-gray-800 mx-5"
+                  <button
+                    className="mt-4 max-w-full w-auto px-6 py-3 bg-yellow-700 text-white text-sm font-medium rounded-full shadow hover:bg-yellow-800 focus:ring-2 focus:ring-yellow-600"
                     onClick={handleOnboard}
+                    disabled={inTxn}
                   >
                     {inTxn ? (
-                      <Preloader className="center-item mt-3" />
+                      <Preloader className="mt-1" />
                     ) : (
                       <>
                         Join Zumji
                         <Icon
-                          ios={<FaChevronRight className="w-4 h-4" />}
-                          material={<FaChevronRight className="w-4 h-4" />}
+                          ios={<FaChevronRight className="w-4 h-4 ml-1" />}
+                          material={<FaChevronRight className="w-4 h-4 ml-1" />}
                         />
                       </>
                     )}
-                  </span>
+                  </button>
                 )}
               </div>
             </AnimateFromBottom>
