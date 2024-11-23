@@ -2,7 +2,6 @@ import {
   Page,
   Navbar,
   Block,
-  Button,
   List,
   ListItem,
   Sheet,
@@ -41,7 +40,7 @@ const Layout = ({ children }: any) => {
 
   return (
     <Page>
-      <div className="relative min-h-screen bg-gradient-to-r from-yellow-gradient-start to-yellow-gradient-end">
+      <div className="relative min-h-screen bg-gradient-to-b from-yellow-700/[4.79] via-yellow-800">
         <Navbar
           title="Zumji"
           right={
