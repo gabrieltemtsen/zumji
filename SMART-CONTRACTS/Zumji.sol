@@ -185,6 +185,12 @@ contract Zumji {
 
         emit PointsClaimed(msg.sender, DAILY_CLAIM_POINTS);
     }
+    //TODO fix this
+    // function claimDailyPointsForUser(address user, uint256 points) external {
+    // require(msg.sender == address(zumjiTippingContract), "Unauthorized");
+    // require(isUserOnboarded(user), "User not onboarded");
+    // traders[user].zumjiPoints += points;}
+
 
     function hasClaimedToday(address user) external view returns (bool) {
         return block.timestamp < traders[user].lastClaimTimestamp + 1 days;
