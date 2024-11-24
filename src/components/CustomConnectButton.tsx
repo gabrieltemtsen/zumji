@@ -77,7 +77,7 @@ export const CustomConnectButton = () => {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      backgroundColor: 'red',
+                      backgroundColor: 'yellow',
                       color: 'white',
                       padding: '10px 20px',
                       borderRadius: '8px',
@@ -112,7 +112,7 @@ export const CustomConnectButton = () => {
                     onClick={openAccountModal}
                     type="button"
                     style={{
-                      backgroundColor: 'red',
+                      backgroundColor: 'yellow',
                       color: 'white',
                       padding: '10px 20px',
                       borderRadius: '8px',
