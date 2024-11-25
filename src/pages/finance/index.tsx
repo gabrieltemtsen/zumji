@@ -95,8 +95,8 @@ const Index = () => {
   };
 
   const handleStake = async () => {
-    if (!stakeAmount) return alert("Please enter a valid amount");
-
+    if (!stakeAmount) return toast.error("Please enter a valid amount to unstake");
+    
     try {
       setInTxn(true);
 
@@ -129,7 +129,7 @@ const Index = () => {
   };
 
   const handleUnStake = async () => {
-    if (!unstakeAmount) return alert("Please enter a valid amount to unstake");
+    if (!unstakeAmount) return toast.error("Please enter a valid amount to unstake");
 
     try {
       setInTxn(true);
@@ -186,7 +186,7 @@ const Index = () => {
   };
 
   const handleBorrow = async () => {
-    if (!borrowAmount) return alert("Please enter a valid amount to borrow");
+    if (!borrowAmount) return toast.error("Please enter a valid amount to unstake");
     const amountInWei = ethers.utils.parseEther(borrowAmount.toString());
     const _amount = amountInWei.toString();
 
@@ -211,7 +211,7 @@ const Index = () => {
   };
 
   const handleRepay = async () => {
-    if (!repayAmount) return alert("Please enter a valid amount to repay");
+    if (!repayAmount) return toast.error("Please enter a valid amount to unstake");
     const amountInWei = ethers.utils.parseEther(repayAmount.toString());
     const _amount = amountInWei.toString();
 
@@ -234,6 +234,7 @@ const Index = () => {
       setInTxn(false);
     }
   };
+
   if (!isOnboarded) {
     return (
       <Layout>
@@ -255,6 +256,7 @@ const Index = () => {
       </Layout>
     );
   }
+  
   return (
     <Layout>
       <Navbar title={`Zumji >> Finance`} />
