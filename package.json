@@ -28,7 +28,10 @@
     "react-toastify": "^10.0.5",
     "swiper": "^11.1.4",
     "viem": "~1.12.2",
-    "wagmi": "~1.4.2"
+    "wagmi": "~1.4.2",
+    "react-hook-form": "^7.53.2",
+    "@hookform/resolvers": "^3.9.0",
+    "yup": "^1.4"
   },
   "devDependencies": {
     "@types/node": "^20",
