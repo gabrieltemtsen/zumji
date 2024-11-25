@@ -74,10 +74,10 @@ export const CustomConnectButton = () => {
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
                     onClick={openChainModal}
+                    className='yellow-700'
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      backgroundColor: 'yellow',
                       color: 'white',
                       padding: '10px 20px',
                       borderRadius: '8px',
@@ -110,9 +110,9 @@ export const CustomConnectButton = () => {
                   </button>
                   <button
                     onClick={openAccountModal}
+                    className='yellow-700'
                     type="button"
                     style={{
-                      backgroundColor: 'yellow',
                       color: 'white',
                       padding: '10px 20px',
                       borderRadius: '8px',
