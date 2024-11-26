@@ -1,4 +1,4 @@
-const CustomButton = ({ children }: { children: React.ReactNode; }) => {
+const Button = ({ children }: { children: React.ReactNode; }) => {
   const buttonClasses = `border border-[#F15E5F] text-[#F15E5F] rounded-md px-5 py-2`;
 
   return (
@@ -12,4 +12,4 @@ const CustomButton = ({ children }: { children: React.ReactNode; }) => {
   );
 };
 
-export default CustomButton;
+export default Button;
