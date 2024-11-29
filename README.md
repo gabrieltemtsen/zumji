@@ -69,7 +69,12 @@ Zumji is a dynamic platform tailored for small and medium-sized enterprises (SME
 2. Convert Zumji points to cUSD.
 3. Receive cUSD in wallet.'
 
-
+## NEXT FEATURES 
+- Mobile responsitivity _(Mobile FIRST)
+- Landing page (to fit multi-platforms)
+- Contract Refactor
+- Onchain tipping and redeemables 
+- wallet connect integration (upgrade/refactor)
 
 ## Installation
 
