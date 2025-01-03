@@ -59,7 +59,7 @@ export default function Home() {
         functionName: "isUserOnboarded",
         args: [address],
       });
-      setIsOnboarded(onboarded);
+      setIsOnboarded(onboarded as boolean);
     } catch (error) {
       console.error("Fetch Onboard Status Error:", error);
     }
