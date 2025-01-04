@@ -10,6 +10,7 @@ import {
   Link,
   BlockTitle,
   Preloader,
+  Toast,
 } from "konsta/react";
 import Layout from "../Layout";
 import { useAccount } from "wagmi";
@@ -24,7 +25,8 @@ const Index = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const router = useRouter()
+  const [toastMessage, setToastMessage] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -37,18 +39,13 @@ const Index = () => {
         });
         setUsername(name);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching username:", error);
       }
     };
 
-    if (address) {
-      fetchUsername();
-    }
+    if (address) fetchUsername();
   }, [address]);
 
-  const handleUsernameChange = (event:any) => {
-    setNewUsername(event.target.value);
-  };
   const getIsOnboarded = async () => {
     try {
       const isOnboarded: any = await readContract({
@@ -59,20 +56,27 @@ const Index = () => {
       });
       setIsOnboarded(isOnboarded);
     } catch (error) {
-      console.error("ISONB: ", error);
+      console.error("Error checking onboarding status:", error);
     }
   };
 
   useEffect(() => {
-    
-      getIsOnboarded();
-    
+    if (address) getIsOnboarded();
   }, [address]);
 
+  const handleUsernameChange = (event: any) => {
+    setNewUsername(event.target.value);
+  };
+
   const updateUsername = async () => {
-    if (!newUsername) return;
+    if (!newUsername) {
+      setToastMessage("Please enter a valid username.");
+      return;
+    }
+
     try {
       setInTxn(true);
+      setToastMessage("Updating username, please wait...");
       const { hash } = await writeContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
@@ -82,34 +86,37 @@ const Index = () => {
       await waitForTransaction({ hash });
       setUsername(newUsername);
       setIsSheetOpen(false);
+      setToastMessage("Username updated successfully!");
     } catch (error) {
-      console.error(error);
+      console.error("Error updating username:", error);
+      setToastMessage("Failed to update username. Please try again.");
     } finally {
       setInTxn(false);
     }
   };
-  if(!isOnboarded) {
+
+  if (!isOnboarded) {
     return (
       <Layout>
-        <Navbar title={`Zumji >> Finance`} />
-        <div className="m-5 h-full">
-          <Block>
-            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
-              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
-                <Link onClick={()=>{router.push('/')}}>
-                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
-                </Link>
-           
-              </div>
+        <Navbar title="Zumji >> Finance" />
+        <Block className="m-5">
+          <div className="flex flex-wrap justify-center items-center gap-10">
+            <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow text-center">
+              <h5 className="mb-4 text-lg md:text-3xl font-bold text-white">
+                Oops! You are not onboarded.
+              </h5>
+              <Button
+                onClick={() => router.push("/")}
+                className="w-full bg-blue-700 hover:bg-blue-800"
+              >
+                Click here to onboard
+              </Button>
             </div>
-          </Block>
-          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-        </div>
-        
+          </div>
+        </Block>
       </Layout>
     );
   }
-
 
   return (
     <Layout>
@@ -117,24 +124,14 @@ const Index = () => {
       <div className="m-5">
         <Block>
           <div className="max-w-sm mx-auto">
-            <div className="mb-5">
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                {/* Welcome Back, {address} */}
-              </label>
-            </div>
-            <div className="w-full max-w-sm rounded-lg shadow bg-gray-800 border-gray-700">
-              <div className="flex justify-end px-4 pt-4">
+            <div className="w-full rounded-lg shadow bg-gray-800 border-gray-700">
+              <div className="flex justify-end p-4">
                 <button
-                  id="dropdownButton"
-                  data-dropdown-toggle="dropdown"
-                  className="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
-                  type="button"
                   onClick={() => setIsSheetOpen(true)}
+                  className="text-gray-500 hover:bg-gray-100 focus:ring-4 rounded-lg p-1.5"
                 >
-                  <span className="sr-only">Open dropdown</span>
                   <svg
                     className="w-5 h-5"
-                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
                     viewBox="0 0 16 3"
@@ -147,53 +144,64 @@ const Index = () => {
                 <img
                   className="w-24 h-24 mb-3 rounded-full shadow-lg"
                   src="https://i.postimg.cc/nh2FHC2T/gabe-AVATAR.jpg"
-                  alt="profileImage"
+                  alt="Profile"
                 />
-                <h5 className="mb-1 text-xl font-medium text-white">
-                  {username}
-                </h5>
+                <h5 className="text-xl font-medium text-white">{username}</h5>
                 <span className="text-sm text-gray-400">Entrepreneur</span>
-                <div className="flex mt-4 md:mt-6">
-                  <button
+                <div className="flex mt-4 gap-2">
+                  <Button
                     onClick={() => setIsSheetOpen(true)}
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="bg-blue-700 hover:bg-blue-800"
                   >
-                    Edit profile
-                  </button>
-                  <a
-                    href="#"
-                    className="py-2 px-4 ms-2 text-sm font-medium  focus:outline-none  rounded-lg border   hover:text-blue-700 focus:z-10 focus:ring-4  focus:ring-gray-700 bg-gray-800 text-gray-400 border-gray-600 dark:hover:text-white hover:bg-gray-700"
+                    Edit Profile
+                  </Button>
+                  <Button
+                    className="bg-gray-800 text-gray-400 hover:bg-gray-700"
                   >
                     Logout
-                  </a>
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </Block>
-        <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
       </div>
 
       <Sheet
         opened={isSheetOpen}
         onBackdropClick={() => setIsSheetOpen(false)}
-        className={`pb-safe  ${isSheetOpen ? 'relative max-w-md': 'mb-5'}`}
+        className={`pb-safe ${isSheetOpen ? "relative max-w-md" : "mb-5"}`}
       >
         <Block>
-          <div className="mb-5 w-full max-w-md">
-      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter New Username</label>
-      <input onChange={handleUsernameChange} type="text" id="text" className="shadow-sm bg-gray-50 border border-gray-300 mt-1 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Lena.eth" required />
-    </div>
-    {
-      inTxn ? (<Preloader  className="center-item mt-3"/>) : (
-        <Button onClick={updateUsername} disabled={inTxn}>
-            Update Username
-          </Button>
-      )
-    }
-          
+          <div className="mb-5">
+            <label className="block mb-2 text-sm font-medium">
+              Enter New Username
+            </label>
+            <input
+              onChange={handleUsernameChange}
+              type="text"
+              placeholder="Lena.eth"
+              className="w-full p-2.5 bg-gray-50 border rounded-lg text-sm"
+              required
+            />
+          </div>
+          {inTxn ? (
+            <Preloader />
+          ) : (
+            <Button onClick={updateUsername} disabled={inTxn}>
+              Update Username
+            </Button>
+          )}
         </Block>
       </Sheet>
+
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          onClose={() => setToastMessage("")}
+          className="fixed bottom-10 left-1/2 transform -translate-x-1/2"
+        />
+      )}
     </Layout>
   );
 };
