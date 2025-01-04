@@ -25,7 +25,7 @@ const Index = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState<any>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -197,8 +197,8 @@ const Index = () => {
 
       {toastMessage && (
         <Toast
-          message={toastMessage}
-          onClose={() => setToastMessage("")}
+          
+          
           className="fixed bottom-10 left-1/2 transform -translate-x-1/2"
         />
       )}
