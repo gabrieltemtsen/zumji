@@ -1,110 +1,75 @@
-import {
-  Page,
-  Navbar,
-  Block,
-  List,
-  ListItem,
-  Sheet,
-  BlockTitle,
-  Chip,
-} from "konsta/react";
-import React from "react";
-import { FaHandHoldingUsd, FaBriefcase } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { Page, Navbar } from "konsta/react";
 import { IoIosHome } from "react-icons/io";
 import { RiBillLine } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import { SiCoinmarketcap } from "react-icons/si";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useConnect } from "wagmi";
 import { getAccount } from "@wagmi/core";
 import Link from "next/link";
-import { finance, home, p2e, profile } from "@/constants/urls/urls";
 import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
+import { home, finance, p2e, profile } from "@/constants/urls/urls";
 
-const Layout = ({ children }: any) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
   const { connect } = useConnect();
   const account = getAccount();
   const pathName = usePathname();
 
+  const navItems = [
+    { label: "Home", icon: IoIosHome, href: home },
+    { label: "Finance", icon: SiCoinmarketcap, href: finance },
+    { label: "P2E", icon: RiBillLine, href: p2e },
+    { label: "Profile", icon: RxAvatar, href: profile },
+  ];
+
   useEffect(() => {
-    if ((window as any).ethereum && (window as any).ethereum.isMiniPay) {
+    if ((window as any).ethereum?.isMiniPay) {
       setHideConnectBtn(true);
       connect({ connector: new InjectedConnector() });
     }
   }, []);
 
+  const NavItem = ({ label, icon: Icon, href }: { label: string; icon: React.ComponentType; href: string }) => (
+    <Link
+      href={href}
+      className={`inline-flex flex-col items-center justify-center px-5 group ${
+        pathName === href ? "text-yellow-500" : "text-white"
+      } hover:bg-yellow-800`}
+    >
+      <Icon className={`text-lg ${pathName === href ? "text-yellow-500" : "text-white"} group-hover:text-white`} />
+      <span className={`mt-1 text-sm ${pathName === href ? "text-yellow-500" : "text-white"} group-hover:text-white`}>
+        {label}
+      </span>
+    </Link>
+  );
+
   return (
     <Page>
       <div className="relative min-h-screen bg-gradient-to-b from-yellow-700/[4.79] via-yellow-800">
+        {/* Navbar */}
         <Navbar
           title="Zumji"
-          right={
-            <CustomConnectButton />
-            // <ConnectButton
-            //   showBalance={{
-            //     smallScreen: true,
-            //     largeScreen: false,
-            //   }}
-            // />
-          }
+          right={<CustomConnectButton />}
           colors={{
-            bgIos: 'bg-black',
-            bgMaterial: 'bg-black',
-            textIos: 'text-white',
-            textMaterial: 'text-white',
-          }} />
-        <div className="normalHeight ">
-          {children}
-        </div>
+            bgIos: "bg-black",
+            bgMaterial: "bg-black",
+            textIos: "text-white",
+            textMaterial: "text-white",
+          }}
+        />
 
-        <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200 ">
+        {/* Main Content */}
+        <div className="normalHeight">{children}</div>
+
+        {/* Footer Navigation */}
+        <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200">
           <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-            <Link
-              href="/"
-              type="button"
-              className="inline-flex flex-col items-center justify-center text-white px-5 hover:bg-yellow-800 group"
-            >
-              <IoIosHome className={`${pathName === home && 'text-yellow-500'}`} />
-              <span className={`mt-1 text-sm text-white ${pathName === home && 'text-yellow-500'}  group-hover:text-white`}>
-                Home
-              </span>
-            </Link>
-            <Link
-              href="/finance"
-              type="button"
-              className={`inline-flex flex-col text-white items-center  justify-center px-5 hover:bg-yellow-800 group`}
-            >
-              <SiCoinmarketcap className={`${pathName === finance && 'text-yellow-500'}`} />
-              <span className={`mt-1 text-sm text-white ${pathName === finance && 'text-yellow-500'}  group-hover:text-white`}>
-                Finance
-              </span>
-            </Link>
-            <Link
-              href="/p2e"
-              type="button"
-              className="inline-flex flex-col text-white items-center justify-center px-5 hover:bg-yellow-800 group"
-            >
-              <RiBillLine className={`${pathName === p2e && 'text-yellow-500'}`} />
-              <span className={`mt-1 text-sm text-white ${pathName === p2e && 'text-yellow-500'}  group-hover:text-white`}>
-                P2E
-              </span>
-            </Link>
-
-            <Link
-              href="/profile"
-              type="button"
-              className="inline-flex flex-col text-white items-center justify-center px-5 hover:bg-yellow-800 group"
-            >
-              <RxAvatar className={`${pathName === profile && 'text-yellow-500'}`} />
-              <span className={`mt-1 text-sm text-white ${pathName === profile && 'text-yellow-500'}  group-hover:text-white`}>
-                Profile
-              </span>
-            </Link>
+            {navItems.map((item) => (
+              <NavItem key={item.label} {...item} />
+            ))}
           </div>
         </div>
       </div>
