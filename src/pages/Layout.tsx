@@ -32,7 +32,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const NavItem = ({ label, icon: Icon, href }: { label: string; icon: React.ComponentType; href: string }) => (
+  const NavItem = ({ label, icon: Icon, href }: { label: string; icon: React.ComponentType<{ className?: string }>; href: string }) => (
     <Link
       href={href}
       className={`inline-flex flex-col items-center justify-center px-5 group ${
