@@ -29,7 +29,7 @@ export default function Home() {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const maintenance = false;
+  const maintenance = true;
 
   const handleOnboard = async () => {
     try {
