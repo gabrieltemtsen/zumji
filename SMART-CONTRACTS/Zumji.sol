@@ -10,6 +10,7 @@ contract Zumji {
         uint256 stakeTimestamp;
         bool isOnboarded;
         string username;
+        string profileImage; // Add profileImage field
         uint256 lastClaimTimestamp;
     }
 
@@ -40,6 +41,7 @@ contract Zumji {
     event Onboarded(address indexed trader);
     event UsernameUpdated(address indexed trader, string username);
     event PointsClaimed(address indexed trader, uint256 points);
+    event ProfileImageUpdated(address indexed trader, string profileImage);
 
     modifier onlyOnboarded() {
         require(traders[msg.sender].isOnboarded, "User not onboarded");
@@ -55,6 +57,7 @@ contract Zumji {
             stakeTimestamp: 0,
             isOnboarded: true,
             username: "Zumji OG",
+            profileImage: "", // Initialize profileImage field
             lastClaimTimestamp: 0
         });
 
@@ -69,9 +72,18 @@ contract Zumji {
         return traders[user].username;
     }
 
+    function getProfileImage(address user) external view returns (string memory) {
+        return traders[user].profileImage;
+    }
+
     function updateUsername(string calldata newUsername) external onlyOnboarded {
         traders[msg.sender].username = newUsername;
         emit UsernameUpdated(msg.sender, newUsername);
+    }
+
+    function updateImage(string calldata newImage) external onlyOnboarded {
+        traders[msg.sender].profileImage = newImage;
+        emit ProfileImageUpdated(msg.sender, newImage);
     }
 
     function stake(uint256 amount) external onlyOnboarded {
@@ -154,7 +166,6 @@ contract Zumji {
         require(cUSD.balanceOf(msg.sender) >= AD_FEE, "Insufficient cUSD for ad fee");
         cUSD.transferFrom(msg.sender, address(this), AD_FEE);
 
-
         adverts.push(Advert({
             trader: msg.sender,
             cid: cid
@@ -185,18 +196,12 @@ contract Zumji {
 
         emit PointsClaimed(msg.sender, DAILY_CLAIM_POINTS);
     }
-    //TODO fix this
-    // function claimDailyPointsForUser(address user, uint256 points) external {
-    // require(msg.sender == address(zumjiTippingContract), "Unauthorized");
-    // require(isUserOnboarded(user), "User not onboarded");
-    // traders[user].zumjiPoints += points;}
-
 
     function hasClaimedToday(address user) external view returns (bool) {
         return block.timestamp < traders[user].lastClaimTimestamp + 1 days;
     }
 
     receive() external payable {
-        // Handle the received Ether 
+        // Handle the received Ether
     }
 }
