@@ -28,7 +28,8 @@ const Index = () => {
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
   const [usernameError, setUsernameError] = useState("");
   const [imageError, setImageError] = useState("");
-  const [retrievedImage, setRetrievedImage] = useState<string | null>(null); // State for retrieved image
+  const [retrievedImage, setRetrievedImage] = useState<string | null>(null);
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const Index = () => {
   };
 
   const getIsOnboarded = async () => {
+    setIsPageLoading(true);
     try {
       const isOnboarded: any = await readContract({
         address: ZUMJI_CONTRACT,
@@ -82,6 +84,8 @@ const Index = () => {
       setIsOnboarded(isOnboarded);
     } catch (error) {
       console.error("ISONB: ", error);
+    } finally {
+      setIsPageLoading(false);
     }
   };
 
@@ -122,7 +126,7 @@ const Index = () => {
         await waitForTransaction({ hash: imageHash });
 
         setUsername(newUsername);
-        setRetrievedImage(base64Image); 
+        setRetrievedImage(base64Image);
         setIsSheetOpen(false);
       } catch (error) {
         console.error(error);
@@ -139,11 +143,17 @@ const Index = () => {
       reader.onloadend = () => {
         setProfileImage(file);
         setImagePreview(reader.result);
-        setImageError(""); 
+        setImageError("");
       };
       reader.readAsDataURL(file);
     }
   };
+
+  if (isPageLoading) {
+    return (
+      <Preloader className="w-10 h-10" />
+    );
+  }
 
   if (!isOnboarded) {
     return (

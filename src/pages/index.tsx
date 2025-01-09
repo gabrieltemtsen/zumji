@@ -29,7 +29,7 @@ export default function Home() {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const maintenance = true;
+  // const maintenance = false;
 
   const handleOnboard = async () => {
     try {
@@ -69,13 +69,13 @@ export default function Home() {
     if (address) fetchOnboardStatus();
   }, [address]);
 
-  if (maintenance) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
-      </div>
-    );
-  }
+  // if (maintenance) {
+  //   return (
+  //     <div className="text-center mt-20">
+  //       <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Layout>
