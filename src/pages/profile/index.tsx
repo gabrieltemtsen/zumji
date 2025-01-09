@@ -28,6 +28,7 @@ const Index = () => {
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
   const [usernameError, setUsernameError] = useState("");
   const [imageError, setImageError] = useState("");
+  const [retrievedImage, setRetrievedImage] = useState<string | null>(null); // State for retrieved image
   const router = useRouter();
 
   useEffect(() => {
@@ -45,14 +46,29 @@ const Index = () => {
       }
     };
 
+    const fetchProfileImage = async () => {
+      try {
+        const image: any = await readContract({
+          address: ZUMJI_CONTRACT,
+          abi: ZUMJI_ABI,
+          functionName: "getProfileImage",
+          args: [address],
+        });
+        setRetrievedImage(image);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     if (address) {
       fetchUsername();
+      fetchProfileImage();
     }
   }, [address]);
 
   const handleUsernameChange = (event: any) => {
     setNewUsername(event.target.value);
-    setUsernameError(""); 
+    setUsernameError("");
   };
 
   const getIsOnboarded = async () => {
@@ -96,7 +112,17 @@ const Index = () => {
           args: [newUsername],
         });
         await waitForTransaction({ hash });
+
+        const { hash: imageHash } = await writeContract({
+          address: ZUMJI_CONTRACT,
+          abi: ZUMJI_ABI,
+          functionName: "updateImage",
+          args: [base64Image],
+        });
+        await waitForTransaction({ hash: imageHash });
+
         setUsername(newUsername);
+        setRetrievedImage(base64Image); 
         setIsSheetOpen(false);
       } catch (error) {
         console.error(error);
@@ -113,7 +139,7 @@ const Index = () => {
       reader.onloadend = () => {
         setProfileImage(file);
         setImagePreview(reader.result);
-        setImageError(""); // Clear error message when user selects an image
+        setImageError(""); 
       };
       reader.readAsDataURL(file);
     }
@@ -174,7 +200,7 @@ const Index = () => {
               <div className="flex flex-col items-center pb-10">
                 <img
                   className="w-24 h-24 mb-3 rounded-full shadow-lg"
-                  src={imagePreview instanceof Blob ? URL.createObjectURL(imagePreview) : (imagePreview as string || "https://i.postimg.cc/nh2FHC2T/gabe-AVATAR.jpg")}
+                  src={retrievedImage || (imagePreview instanceof Blob ? URL.createObjectURL(imagePreview) : (imagePreview as string || "https://i.postimg.cc/nh2FHC2T/gabe-AVATAR.jpg"))}
                   alt="profileImage"
                 />
                 <h5 className="mb-1 text-xl font-medium text-white">
@@ -233,7 +259,7 @@ const Index = () => {
           {
             inTxn ? (<Preloader className="center-item mt-3" />) : (
               <Button onClick={updateUsername} disabled={inTxn}>
-                Update Username
+                Update Profile
               </Button>
             )
           }
