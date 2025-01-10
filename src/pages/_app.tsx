@@ -38,6 +38,7 @@ const wagmiConfig = createConfig({
 });
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [deviceType, setDeviceType] = useState<any>(null);
+  const maintenance = true;
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
@@ -54,7 +55,16 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       setDeviceType("laptop");
     }
   }, []);
-  const theme = deviceType === "ios" ? "ios" : "material";
+  const theme = deviceType === "ios" ? "ios" : "material";  
+  
+  if (maintenance) {
+    return (
+      <div className="text-center mt-20">
+        <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
+      </div>
+    );
+  }
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
