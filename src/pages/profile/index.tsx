@@ -16,6 +16,7 @@ import { useAccount } from "wagmi";
 import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 import { useRouter } from "next/router";
+import LottieAnimation from "@/animation/lottie";
 
 const Index = () => {
   const { address } = useAccount();
@@ -151,7 +152,9 @@ const Index = () => {
 
   if (isPageLoading) {
     return (
-      <Preloader className="w-10 h-10" />
+      <div className="flex items-center justify-center">
+        <LottieAnimation />
+      </div>
     );
   }
 
