@@ -18,6 +18,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import P2ESwiper from "./components/swiper/P2ESwiper";
+import LottieAnimation from "@/animation/lottie";
+import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
 
 const Index = () => {
@@ -27,9 +29,8 @@ const Index = () => {
   const [dailyClicks, setDailyClicks] = useState(0);
   const [zumjiPoints, setZumjiPoints] = useState(0);
   const [hasClaimed, setHasClaimed] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(false);
   const router = useRouter();
-  const pathName = usePathname();
+  const { isPageLoading, isOnboarded } = useGetIsOnboarded();
 
   useEffect(() => {
     const fetchClaimStatus = async () => {
@@ -50,25 +51,6 @@ const Index = () => {
       fetchClaimStatus();
     }
   }, [address]);
-  const getIsOnboarded = async () => {
-    try {
-      const isOnboarded: any = await readContract({
-        address: ZUMJI_CONTRACT,
-        abi: ZUMJI_ABI,
-        functionName: "isUserOnboarded",
-        args: [address],
-      });
-      setIsOnboarded(isOnboarded);
-    } catch (error) {
-      console.error("ISONB: ", error);
-    }
-  };
-
-  useEffect(() => {
-
-    getIsOnboarded();
-
-  }, [address]);
 
 
   useEffect(() => {
@@ -77,7 +59,8 @@ const Index = () => {
     nextMidnight.setHours(24, 0, 0, 0);
     const timeUntilMidnight = Number(nextMidnight) - Number(now);
 
-    const timer = setTimeout(() => {
+    const timer = setTimeout(() => {  
+
       setDailyClicks(0);
       setHasClaimed(false);
     }, timeUntilMidnight);
@@ -113,7 +96,16 @@ const Index = () => {
       setInTxn(false);
     }
   };
-  if(!isOnboarded) {
+
+  if (isPageLoading) {
+    return (
+      <div className="flex items-center justify-center">
+        <LottieAnimation />
+      </div>
+    );
+  }
+
+  if (!isOnboarded) {
     return (
       <Layout>
         <Navbar title={`Zumji >> Finance`} />
@@ -121,7 +113,7 @@ const Index = () => {
           <Block>
             <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
               <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
-                <Link onClick={()=>{router.push('/')}}>
+                <Link onClick={() => { router.push('/'); }}>
                   <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
                 </Link>
 

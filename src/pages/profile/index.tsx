@@ -17,6 +17,7 @@ import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
 import { useRouter } from "next/router";
 import LottieAnimation from "@/animation/lottie";
+import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
 const Index = () => {
   const { address } = useAccount();
@@ -24,14 +25,13 @@ const Index = () => {
   const [username, setUsername] = useState(" ");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [isOnboarded, setIsOnboarded] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
   const [usernameError, setUsernameError] = useState("");
   const [imageError, setImageError] = useState("");
   const [retrievedImage, setRetrievedImage] = useState<string | null>(null);
-  const [isPageLoading, setIsPageLoading] = useState(false);
   const router = useRouter();
+  const { isPageLoading, isOnboarded } = useGetIsOnboarded();
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -72,27 +72,6 @@ const Index = () => {
     setNewUsername(event.target.value);
     setUsernameError("");
   };
-
-  const getIsOnboarded = async () => {
-    setIsPageLoading(true);
-    try {
-      const isOnboarded: any = await readContract({
-        address: ZUMJI_CONTRACT,
-        abi: ZUMJI_ABI,
-        functionName: "isUserOnboarded",
-        args: [address],
-      });
-      setIsOnboarded(isOnboarded);
-    } catch (error) {
-      console.error("ISONB: ", error);
-    } finally {
-      setIsPageLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getIsOnboarded();
-  }, [address]);
 
   const updateUsername = async () => {
     if (!newUsername) {
