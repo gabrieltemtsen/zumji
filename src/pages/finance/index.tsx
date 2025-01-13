@@ -294,7 +294,7 @@ const Index = () => {
       <FinanceModal
         isSheetOpen={stakeSheetOpened}
         onBackdropClick={() => setStakeSheetOpened(false)}
-        onButtonClick={handleUnStake}
+        onButtonClick={handleStake}
         onClose={() => setStakeSheetOpened(false)}
         onInputChange={setStakeAmount}
         opened={stakeSheetOpened}
