@@ -38,7 +38,7 @@ const wagmiConfig = createConfig({
 });
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [deviceType, setDeviceType] = useState<any>(null);
-  const maintenance = true;
+  const maintenance = false;
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
