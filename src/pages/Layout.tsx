@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Page, Navbar } from "konsta/react";
+import { Page, Navbar, Icon } from 'konsta/react';
 import { IoIosHome } from "react-icons/io";
 import { RiBillLine } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
@@ -11,8 +11,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
 import { home, finance, p2e, profile } from "@/constants/urls/urls";
+import Image from "next/image";
+import { zumjiLogo } from "@/constants/images";
+import ZumjiLogo from "@/components/logo/Logo";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode; }) => {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
   const { connect } = useConnect();
   const account = getAccount();
@@ -32,12 +35,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const NavItem = ({ label, icon: Icon, href }: { label: string; icon: React.ComponentType<{ className?: string }>; href: string }) => (
+  const NavItem = ({ label, icon: Icon, href }: { label: string; icon: React.ComponentType<{ className?: string; }>; href: string; }) => (
     <Link
       href={href}
-      className={`inline-flex flex-col items-center justify-center px-5 group ${
-        pathName === href ? "text-yellow-500" : "text-white"
-      } hover:bg-yellow-800`}
+      className={`inline-flex flex-col items-center justify-center px-5 group ${pathName === href ? "text-yellow-500" : "text-white"
+        } hover:bg-yellow-800`}
     >
       <Icon className={`text-lg ${pathName === href ? "text-yellow-500" : "text-white"} group-hover:text-white`} />
       <span className={`mt-1 text-sm ${pathName === href ? "text-yellow-500" : "text-white"} group-hover:text-white`}>
@@ -53,6 +55,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <Navbar
           title="Zumji"
           right={<CustomConnectButton />}
+          left={
+            <Link href='/' className="" >
+              <ZumjiLogo height={60} width={60} />
+            </Link>
+          }
           colors={{
             bgIos: "bg-black",
             bgMaterial: "bg-black",
