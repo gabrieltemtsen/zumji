@@ -57,7 +57,7 @@ const Layout = ({ children }: { children: React.ReactNode; }) => {
           right={<CustomConnectButton />}
           left={
             <Link href='/' className="" >
-              <ZumjiLogo height={60} width={60} />
+              <ZumjiLogo height={40} width={40} className="rounded-full"/>
             </Link>
           }
           colors={{
