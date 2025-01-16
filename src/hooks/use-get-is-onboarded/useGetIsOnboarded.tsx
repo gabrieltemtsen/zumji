@@ -17,6 +17,7 @@ const useGetIsOnboarded = () => {
                 functionName: "isUserOnboarded",
                 args: [address],
             });
+            console.log(898989, isOnboarded)
             setIsOnboarded(isOnboarded);
         } catch (error) {
             console.error("ISONB: ", error);
