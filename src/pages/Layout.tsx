@@ -15,6 +15,7 @@ import Image from "next/image";
 import { zumjiLogo } from "@/constants/images";
 import ZumjiLogo from "@/components/logo/Logo";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
+import { useConnectState } from "@/hooks/use-connect/useConnect";
 
 const Layout = ({ children }: { children: React.ReactNode; }) => {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
@@ -22,8 +23,7 @@ const Layout = ({ children }: { children: React.ReactNode; }) => {
   const account = getAccount();
   const pathName = usePathname();
   const { isPageLoading, isOnboarded } = useGetIsOnboarded();
-
-  console.log(1444, isOnboarded)
+  const { isConnected } = useConnectState();
 
   const navItems = [
     { label: "Home", icon: IoIosHome, href: home },
@@ -78,7 +78,7 @@ const Layout = ({ children }: { children: React.ReactNode; }) => {
         {/* Footer Navigation */}
         <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200">
           <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-            {isOnboarded && navItems.map((item) => (
+            {isOnboarded && isConnected && navItems.map((item) => (
               <NavItem key={item.label} {...item} />
             ))}
           </div>

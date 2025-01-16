@@ -1,7 +1,11 @@
+import { useConnectState } from '@/hooks/use-connect/useConnect';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export const CustomConnectButton = () => {
+  const { setIsConnected } = useConnectState();
+
   return (
     <ConnectButton.Custom>
       {({
@@ -20,7 +24,7 @@ export const CustomConnectButton = () => {
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
 
-        console.log(1010101, connected);
+          setIsConnected(connected || false)
 
         return (
           <div

@@ -9,6 +9,7 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { celo, celoAlfajores } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { ConnectWalletButtonProvider } from '@/context/ConnectContext';
 
 
 
@@ -68,9 +69,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
+        <ConnectWalletButtonProvider>
         <App dark={true} safeAreas={true} theme={theme}>
           <Component {...pageProps} />
         </App>
+        </ConnectWalletButtonProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );
