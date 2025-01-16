@@ -25,8 +25,6 @@ const ConnectWalletButtonProvider = ({ children }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  // useEffect(() => {
   //   const initAuth = async () => {
   //     const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName);
 
