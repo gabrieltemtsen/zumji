@@ -12,8 +12,6 @@ import { publicProvider } from "wagmi/providers/public";
 import { ConnectWalletButtonProvider } from '@/context/ConnectContext';
 
 
-
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     celo,
