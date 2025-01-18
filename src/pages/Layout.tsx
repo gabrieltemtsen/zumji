@@ -17,7 +17,7 @@ import ZumjiLogo from "@/components/logo/Logo";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 import { useConnectState } from "@/hooks/use-connect/useConnect";
 
-const Layout = ({ children }: { children: React.ReactNode; }) => {
+const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, children: React.ReactNode; }) => {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
   const { connect } = useConnect();
   const account = getAccount();
@@ -61,7 +61,7 @@ const Layout = ({ children }: { children: React.ReactNode; }) => {
           right={<CustomConnectButton />}
           left={
             <Link href='/' className="" >
-              <ZumjiLogo height={40} width={40} className="rounded-full"/>
+              <ZumjiLogo height={40} width={40} className="rounded-full" />
             </Link>
           }
           colors={{
@@ -71,6 +71,7 @@ const Layout = ({ children }: { children: React.ReactNode; }) => {
             textMaterial: "text-white",
           }}
         />
+        {subNavBarTitle && <Navbar title={subNavBarTitle} />}
 
         {/* Main Content */}
         <div className="normalHeight">{children}</div>

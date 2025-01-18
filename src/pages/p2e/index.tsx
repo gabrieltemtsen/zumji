@@ -107,8 +107,7 @@ const Index = () => {
 
   if (!isOnboarded) {
     return (
-      <Layout>
-        <Navbar title={`Zumji >> Finance`} />
+      <Layout subNavBarTitle="Zumji >> Play2Earn">
         <div className="m-5 h-full">
           <Block>
             <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
@@ -128,8 +127,7 @@ const Index = () => {
   }
 
   return (
-    <Layout>
-      <Navbar title="Zumji >> Play2Earn" />
+    <Layout subNavBarTitle="Zumji >> Play2Earn">
       <div className="m-5">
         <div className="max-w-sm mx-auto justify-center items-center">
           <Block>
