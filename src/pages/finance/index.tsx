@@ -249,8 +249,7 @@ const Index = () => {
   }
 
   return (
-    <Layout>
-      <Navbar title={`Zumji >> Finance`} />
+    <Layout subNavBarTitle="Zumji >> Finance">
       <div className="m-5 h-full">
         <Block>
           <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
