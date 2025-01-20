@@ -58,10 +58,11 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         {/* Navbar */}
         <Navbar
           title="Zumji"
+          titleClassName="text-md md:text-xl lg:text-2xl "
           right={<CustomConnectButton />}
           left={
             <Link href='/' className="" >
-              <ZumjiLogo height={40} width={40} className="rounded-full" />
+              <ZumjiLogo height={40} width={40} className="rounded-full h-7 w-7  object-contain " />
             </Link>
           }
           colors={{
