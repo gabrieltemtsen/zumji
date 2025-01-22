@@ -1,11 +1,11 @@
 import AnimateFromBottom from "@/animation/animate-from-bottom";
-import { FaHandHoldingUsd, FaStar } from "react-icons/fa";
-import CustomButton from "@/components/CustomButton";
+import { FaStar } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Ensure Swiper styles are imported
 import "swiper/css/autoplay";
+import { Autoplay } from "swiper/modules";
 
-const RatingStars = ({ rating }: { rating: number }) => {
+const RatingStars = ({ rating }: { rating: number; }) => {
     return (
         <div className="flex items-center space-x-1 rtl:space-x-reverse">
             {Array.from({ length: 5 }).map((_, index) => (
@@ -55,9 +55,17 @@ const ProductCard = ({
 };
 
 const P2ESwiper = () => {
+    const products = [
+        { title: "Advertise Products Here", price: 599, rating: 5, href: "#" },
+        { title: "Best Deals on Electronics", price: 299, rating: 4, href: "#" },
+        { title: "Limited Time Offer!", price: 799, rating: 5, href: "#" },
+        { title: "Get our coupons!", price: 800, rating: 5, href: "#" },
+    ];
+
     return (
         <AnimateFromBottom>
             <Swiper
+                modules={[Autoplay]}
                 spaceBetween={20}
                 slidesPerView={1}
                 loop={true}
@@ -68,30 +76,16 @@ const P2ESwiper = () => {
                     1024: { slidesPerView: 3 },
                 }}
             >
-                <SwiperSlide>
-                    <ProductCard
-                        title="Advertise Products Here"
-                        price={599}
-                        rating={5}
-                        href="#"
-                    />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <ProductCard
-                        title="Best Deals on Electronics"
-                        price={299}
-                        rating={4}
-                        href="#"
-                    />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <ProductCard
-                        title="Limited Time Offer!"
-                        price={799}
-                        rating={5}
-                        href="#"
-                    />
-                </SwiperSlide>
+                {products.map((product, index) => (
+                    <SwiperSlide key={index}>
+                        <ProductCard
+                            title={product.title}
+                            price={product.price}
+                            rating={product.rating}
+                            href={product.href}
+                        />
+                    </SwiperSlide>
+                ))}
             </Swiper>
         </AnimateFromBottom>
     );
