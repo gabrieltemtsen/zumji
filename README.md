@@ -42,15 +42,6 @@ Zumji is a dynamic platform tailored for small and medium-sized enterprises (SME
 2. Pay the ad fee in cUSD.
 3. Submit ad content for display.
 
-### Play to Earn (P2E)
-
-**Description**: Users can earn Zumji points by participating in a tapping game.  
-**Benefits**: Engages users in a fun activity while viewing ads from traders.  
-**Process**:
-1. Connect wallet.
-2. Access the tapping game.
-3. Earn Zumji points by tapping and viewing ads.
-
 ### Gifting and Tipping
 
 **Description**: Users can send Zumji points to others via email.  
