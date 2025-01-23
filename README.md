@@ -2,7 +2,7 @@
 
 ## Overview:
 
-Zumji is a dynamic platform tailored for small and medium-sized enterprises (SMEs), built on the Celo blockchain. Zumji revolutionizes loyalty and rewards systems by enabling traders to stake, borrow, and earn rewards effortlessly. Traders can stake their cUSD to earn Zumji points, borrow cUSD against their staked amount, and post ads to reach a targeted audience. Users can participate in a fun tapping game to earn Zumji points, send points to others via email, and redeem their points for cUSD. Zumji's comprehensive features empower SMEs to save, earn rewards, and access liquidity for their business operations, fostering a thriving and engaged community.
+Zumji is a dynamic platform tailored for small and medium-sized enterprises (SMEs), built on the Celo blockchain. Zumji revolutionizes loyalty and rewards systems by enabling traders to stake, borrow, and earn rewards effortlessly. Traders can stake their cUSD to earn Zumji points, borrow cUSD against their staked amount, and post ads to reach a targeted audience. Zumji's comprehensive features empower SMEs to save, earn rewards, and access liquidity for their business operations, fostering a thriving and engaged community.
 
 ## Technology Stack:
 
