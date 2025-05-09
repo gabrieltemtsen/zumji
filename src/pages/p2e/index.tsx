@@ -1,135 +1,143 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Page,
-  Navbar,
-  Block,
-  Button,
-  Link,
-  Preloader,
-} from "konsta/react";
-import { useAccount } from "wagmi";
-import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
-import Layout from "../Layout";
-import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { readContract, writeContract, waitForTransaction } from '@wagmi/core';
+import { Navbar, Block, Button, Preloader, Link } from 'konsta/react';
+import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+
+import Layout from '../Layout';
+import P2ESwiper from './components/swiper/P2ESwiper';
+import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
+
 import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from "next/router";
-import { usePathname } from "next/navigation";
-import P2ESwiper from "./components/swiper/P2ESwiper";
 
+const DAILY_LIMIT = 100;
 
-const Index = () => {
+const Index: React.FC = () => {
   const { address } = useAccount();
-  const [inTxn, setInTxn] = useState(false);
-  const [clicks, setClicks] = useState(0);
-  const [dailyClicks, setDailyClicks] = useState(0);
-  const [zumjiPoints, setZumjiPoints] = useState(0);
-  const [hasClaimed, setHasClaimed] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(false);
   const router = useRouter();
-  const pathName = usePathname();
 
-  useEffect(() => {
-    const fetchClaimStatus = async () => {
-      try {
-        const claimed: any = await readContract({
-          address: ZUMJI_CONTRACT,
-          abi: ZUMJI_ABI,
-          functionName: "hasClaimedToday",
-          args: [address],
-        });
-        setHasClaimed(claimed);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const [state, setState] = useState({
+    clicks: 0,
+    dailyClicks: 0,
+    points: 0,
+    hasClaimed: false,
+    isOnboarded: false,
+    inTxn: false,
+  });
 
-    if (address) {
-      fetchClaimStatus();
-    }
-  }, [address]);
-  const getIsOnboarded = async () => {
+  /* ──────────────────────  Contract reads  ────────────────────── */
+
+  const fetchHasClaimed = useCallback(async () => {
+    if (!address) return;
     try {
-      const isOnboarded: any = await readContract({
+      const claimed: boolean = await readContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
-        functionName: "isUserOnboarded",
+        functionName: 'hasClaimedToday',
         args: [address],
       });
-      setIsOnboarded(isOnboarded);
-    } catch (error) {
-      console.error("ISONB: ", error);
+      setState((s) => ({ ...s, hasClaimed: claimed }));
+    } catch (err) {
+      console.error('fetchHasClaimed', err);
     }
-  };
-
-  useEffect(() => {
-
-    getIsOnboarded();
-
   }, [address]);
 
+  const fetchIsOnboarded = useCallback(async () => {
+    if (!address) return;
+    try {
+      const onboarded: boolean = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: 'isUserOnboarded',
+        args: [address],
+      });
+      setState((s) => ({ ...s, isOnboarded: onboarded }));
+    } catch (err) {
+      console.error('fetchIsOnboarded', err);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    fetchHasClaimed();
+    fetchIsOnboarded();
+  }, [fetchHasClaimed, fetchIsOnboarded]);
+
+  /* ───────────────────  Midnight reset timer  ─────────────────── */
 
   useEffect(() => {
     const now = new Date();
     const nextMidnight = new Date(now);
     nextMidnight.setHours(24, 0, 0, 0);
-    const timeUntilMidnight = Number(nextMidnight) - Number(now);
 
-    const timer = setTimeout(() => {
-      setDailyClicks(0);
-      setHasClaimed(false);
-    }, timeUntilMidnight);
+    const timer = setTimeout(
+      () =>
+        setState((s) => ({
+          ...s,
+          dailyClicks: 0,
+          hasClaimed: false,
+        })),
+      nextMidnight.getTime() - now.getTime(),
+    );
 
     return () => clearTimeout(timer);
-  }, [dailyClicks]);
+  }, [state.dailyClicks]);
+
+  /* ────────────────────────  Handlers  ───────────────────────── */
 
   const handleClick = () => {
-    if (dailyClicks < 100 && !hasClaimed) {
-      setClicks(clicks + 1);
-      setDailyClicks(dailyClicks + 1);
-      setZumjiPoints(zumjiPoints + 1);
-    }
+    if (state.dailyClicks >= DAILY_LIMIT || state.hasClaimed) return;
+
+    setState((s) => ({
+      ...s,
+      clicks: s.clicks + 1,
+      dailyClicks: s.dailyClicks + 1,
+      points: s.points + 1,
+    }));
   };
 
   const handleClaim = async () => {
+    setState((s) => ({ ...s, inTxn: true }));
     try {
-      setInTxn(true);
       const { hash } = await writeContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
-        functionName: "claimDailyPoints",
-        args: [],
+        functionName: 'claimDailyPoints',
       });
       await waitForTransaction({ hash });
-      setClicks(0);
-      setHasClaimed(true);
-      toast.success("Claim successful!");
-    } catch (error) {
-      console.error(error);
-      toast.error("Claim failed!");
+      setState((s) => ({ ...s, clicks: 0, hasClaimed: true }));
+      toast.success('Claim successful!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Claim failed!');
     } finally {
-      setInTxn(false);
+      setState((s) => ({ ...s, inTxn: false }));
     }
   };
-  if(!isOnboarded) {
+
+  /* ───────────────────────  Derived UI  ──────────────────────── */
+
+  const canClaim = useMemo(
+    () => state.dailyClicks >= DAILY_LIMIT && !state.hasClaimed && !state.inTxn,
+    [state],
+  );
+
+  /* ─────────────────────────  Render  ────────────────────────── */
+
+  if (!state.isOnboarded) {
     return (
       <Layout>
-        <Navbar title={`Zumji >> Finance`} />
-        <div className="m-5 h-full">
-          <Block>
-            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
-              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
-                <Link onClick={()=>{router.push('/')}}>
-                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
-                </Link>
-
-              </div>
-            </div>
-          </Block>
-          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-        </div>
+        <Navbar title="Zumji › Finance" />
+        <Block className="flex h-full items-center justify-center">
+          <div className="w-10/12 max-w-lg rounded-lg bg-gray-800 p-6 shadow">
+            <Link onClick={() => router.push('/')}>
+              <h5 className="text-center text-xl font-bold text-white sm:text-2xl">
+                Oops! You’re not onboarded yet. Click here to get started.
+              </h5>
+            </Link>
+          </div>
+        </Block>
         <ToastContainer />
       </Layout>
     );
@@ -137,49 +145,48 @@ const Index = () => {
 
   return (
     <Layout>
-      <Navbar title="Zumji >> Play2Earn" />
-      <div className="m-5">
-        <div className="max-w-sm mx-auto justify-center items-center">
-          <Block>
-            <button
-              className="flex flex-row items-center justify-center"
-              onClick={handleClick}
-              disabled={dailyClicks >= 100 || hasClaimed}
-            >
-              <h1 className="text-black text-lg font-bold">Press to Earn</h1>
-              <div className="button">
-                <img
-                  src="/tap.jpeg"
-                  alt="Click to Earn"
-                  className="w-40 object-cover rounded-2xl h-36 mb-2"
-                />
-              </div>
-              <h1 className="text-black text-lg font-bold">Tap to Earn</h1>
-            </button>
-            <span className="text-2xl text-black font-bold m-5 p-5">
-              ZUMJI POINTS: {zumjiPoints}
+      <Navbar title="Zumji › Play2Earn" />
+      <div className="m-5 space-y-6">
+        <Block className="flex flex-col items-center">
+          <button
+            className="flex flex-col items-center"
+            onClick={handleClick}
+            disabled={state.dailyClicks >= DAILY_LIMIT || state.hasClaimed}
+          >
+            <h1 className="mb-2 text-lg font-bold text-black">Tap to Earn</h1>
+            <img
+              src="/tap.jpeg"
+              alt="Tap to earn"
+              className="mb-2 h-36 w-40 rounded-2xl object-cover"
+            />
+            <span className="text-2xl font-bold text-black">
+              ZUMJI POINTS: {state.points}
             </span>
-          </Block>
+          </button>
+        </Block>
 
-          {inTxn ? (<Preloader className="center-item mt-3" />) : (
-            <Button
-              className="my-5 bg-gray-900"
-              onClick={handleClaim}
-              outline
-              disabled={clicks < 100 || inTxn || hasClaimed}
-            >
-              <span className="text-white">Claim Points</span>
-            </Button>
-          )}
+        {state.inTxn ? (
+          <Preloader className="mx-auto" />
+        ) : (
+          <Button
+            className="bg-gray-900"
+            outline
+            onClick={handleClaim}
+            disabled={!canClaim}
+          >
+            <span className="text-white">Claim Points</span>
+          </Button>
+        )}
 
-          {hasClaimed && (
-            <span className="text-red-800">
-              You have already claimed your points for today. Please come back tomorrow.
-            </span>
-          )}
-        </div>
+        {state.hasClaimed && (
+          <span className="block text-center text-red-800">
+            You’ve already claimed today. Come back tomorrow!
+          </span>
+        )}
+
         <P2ESwiper />
       </div>
+
       <ToastContainer />
     </Layout>
   );
