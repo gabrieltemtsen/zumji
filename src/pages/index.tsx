@@ -29,7 +29,6 @@ export default function Home() {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const maintenance = true;
 
   const handleOnboard = async () => {
     try {
@@ -69,14 +68,6 @@ export default function Home() {
     if (address) fetchOnboardStatus();
   }, [address]);
 
-  if (maintenance) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
-      </div>
-    );
-  }
-
   return (
     <Layout>
       <div
@@ -89,7 +80,7 @@ export default function Home() {
               href="https://celo.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm rounded-full mb-7 bg-gray-800 text-white hover:bg-gray-700"
+              className="inline-flex items-center justify-between px-1 py-1 pr-4 pl-4 text-sm rounded-full mb-7 bg-gray-800 text-white hover:bg-gray-700"
             >
               <Chip
                 media={
@@ -101,20 +92,20 @@ export default function Home() {
                 }
                 className="text-xs bg-black rounded-full text-white px-4 py-1.5 mr-3"
               />
-              <span className="text-sm font-medium ml-2">Powered by Celo</span>
+              <span className="text-xs sm:text-sm font-medium ml-2">Powered by Celo</span>
               <Icon
                 ios={<FaChevronRight />}
                 material={<FaChevronRight />}
-                className="w-5 h-5 ml-2"
+                className="w-5 h-5 ml-2 mt-1.5"
               />
             </a>
             <AnimateFromRight>
-              <h1 className="mb-4 text-4xl font-extrabold text-white tracking-tight lg:text-6xl">
+              <h1 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight lg:text-6xl">
                 Transform Your Business with Zumji: Loyalty, Rewards, and More
               </h1>
             </AnimateFromRight>
             <AnimateFromLeft>
-              <p className="mb-8 text-lg font-normal text-white lg:text-xl sm:px-16 xl:px-48">
+              <p className="mb-8 text-md sm:text-lg md:text-xl font-normal text-white sm:px-16 xl:px-48">
                 Empowering SMEs with Staking, Borrowing, and Innovative Rewards on Celo
               </p>
             </AnimateFromLeft>
@@ -123,10 +114,10 @@ export default function Home() {
                 {isOnboarded ? (
                   <Link
                     href="/finance"
-                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gray-600 rounded-full shadow-lg hover:shadow-black focus:ring-2 focus:ring-yellow-600"
+                    className="mt-6 max-w-md inline-flex items-center justify-center px-5 py-2 sm:px-4 sm:py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 text-xs sm:text-sm md:text-md lg:text-lg font-medium text-white bg-gray-600 rounded-full shadow-lg hover:shadow-black focus:ring-2 focus:ring-yellow-600"
                   >
                     Stats
-                    <FaChevronRight className="w-4 h-4 ml-2" />
+                    <FaChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-2 " />
                   </Link>
                 ) : (
                   <button

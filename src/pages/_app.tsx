@@ -9,8 +9,7 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { celo, celoAlfajores } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-
-
+import { ConnectWalletButtonProvider } from '@/context/ConnectContext';
 
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -38,6 +37,7 @@ const wagmiConfig = createConfig({
 });
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [deviceType, setDeviceType] = useState<any>(null);
+  const maintenance = false;
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
@@ -54,13 +54,24 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       setDeviceType("laptop");
     }
   }, []);
-  const theme = deviceType === "ios" ? "ios" : "material";
+  const theme = deviceType === "ios" ? "ios" : "material";  
+  
+  if (maintenance) {
+    return (
+      <div className="text-center mt-20">
+        <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
+      </div>
+    );
+  }
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
+        <ConnectWalletButtonProvider>
         <App dark={true} safeAreas={true} theme={theme}>
           <Component {...pageProps} />
         </App>
+        </ConnectWalletButtonProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

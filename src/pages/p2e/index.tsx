@@ -11,36 +11,41 @@ import P2ESwiper from './components/swiper/P2ESwiper';
 import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
+import P2ESwiper from "./components/swiper/P2ESwiper";
+import LottieAnimation from "@/animation/lottie";
+import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
 const DAILY_LIMIT = 100;
 
 const Index: React.FC = () => {
   const { address } = useAccount();
+  const [inTxn, setInTxn] = useState(false);
+  const [clicks, setClicks] = useState(0);
+  const [dailyClicks, setDailyClicks] = useState(0);
+  const [zumjiPoints, setZumjiPoints] = useState(0);
+  const [hasClaimed, setHasClaimed] = useState(false);
   const router = useRouter();
+  const { isPageLoading, isOnboarded } = useGetIsOnboarded();
 
-  const [state, setState] = useState({
-    clicks: 0,
-    dailyClicks: 0,
-    points: 0,
-    hasClaimed: false,
-    isOnboarded: false,
-    inTxn: false,
-  });
+  useEffect(() => {
+    const fetchClaimStatus = async () => {
+      try {
+        const claimed: any = await readContract({
+          address: ZUMJI_CONTRACT,
+          abi: ZUMJI_ABI,
+          functionName: "hasClaimedToday",
+          args: [address],
+        });
+        setHasClaimed(claimed);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  /* ──────────────────────  Contract reads  ────────────────────── */
-
-  const fetchHasClaimed = useCallback(async () => {
-    if (!address) return;
-    try {
-      const claimed: boolean = await readContract({
-        address: ZUMJI_CONTRACT,
-        abi: ZUMJI_ABI,
-        functionName: 'hasClaimedToday',
-        args: [address],
-      });
-      setState((s) => ({ ...s, hasClaimed: claimed }));
-    } catch (err) {
-      console.error('fetchHasClaimed', err);
+    if (address) {
+      fetchClaimStatus();
     }
   }, [address]);
 
@@ -71,15 +76,11 @@ const Index: React.FC = () => {
     const nextMidnight = new Date(now);
     nextMidnight.setHours(24, 0, 0, 0);
 
-    const timer = setTimeout(
-      () =>
-        setState((s) => ({
-          ...s,
-          dailyClicks: 0,
-          hasClaimed: false,
-        })),
-      nextMidnight.getTime() - now.getTime(),
-    );
+    const timer = setTimeout(() => {  
+
+      setDailyClicks(0);
+      setHasClaimed(false);
+    }, timeUntilMidnight);
 
     return () => clearTimeout(timer);
   }, [state.dailyClicks]);
@@ -116,51 +117,57 @@ const Index: React.FC = () => {
     }
   };
 
-  /* ───────────────────────  Derived UI  ──────────────────────── */
-
-  const canClaim = useMemo(
-    () => state.dailyClicks >= DAILY_LIMIT && !state.hasClaimed && !state.inTxn,
-    [state],
-  );
-
-  /* ─────────────────────────  Render  ────────────────────────── */
-
-  if (!state.isOnboarded) {
+  if (isPageLoading) {
     return (
-      <Layout>
-        <Navbar title="Zumji › Finance" />
-        <Block className="flex h-full items-center justify-center">
-          <div className="w-10/12 max-w-lg rounded-lg bg-gray-800 p-6 shadow">
-            <Link onClick={() => router.push('/')}>
-              <h5 className="text-center text-xl font-bold text-white sm:text-2xl">
-                Oops! You’re not onboarded yet. Click here to get started.
-              </h5>
-            </Link>
-          </div>
-        </Block>
+      <div className="flex items-center justify-center">
+        <LottieAnimation />
+      </div>
+    );
+  }
+
+  if (!isOnboarded) {
+    return (
+      <Layout subNavBarTitle="Zumji >> Play2Earn">
+        <div className="m-5 h-full">
+          <Block>
+            <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
+              <div className="max-w-lg w-10/12 p-6 bg-gray-800 border-gray-700 rounded-lg shadow ">
+                <Link onClick={() => { router.push('/'); }}>
+                  <h5 className="mb-2 sm:text-lg md:text-3xl font-bold tracking-tight text-white">Oops You are not onboarded, click here to do so</h5>
+                </Link>
+
+              </div>
+            </div>
+          </Block>
+          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+        </div>
         <ToastContainer />
       </Layout>
     );
   }
 
   return (
-    <Layout>
-      <Navbar title="Zumji › Play2Earn" />
-      <div className="m-5 space-y-6">
-        <Block className="flex flex-col items-center">
-          <button
-            className="flex flex-col items-center"
-            onClick={handleClick}
-            disabled={state.dailyClicks >= DAILY_LIMIT || state.hasClaimed}
-          >
-            <h1 className="mb-2 text-lg font-bold text-black">Tap to Earn</h1>
-            <img
-              src="/tap.jpeg"
-              alt="Tap to earn"
-              className="mb-2 h-36 w-40 rounded-2xl object-cover"
-            />
-            <span className="text-2xl font-bold text-black">
-              ZUMJI POINTS: {state.points}
+    <Layout subNavBarTitle="Zumji >> Play2Earn">
+      <div className="m-5">
+        <div className="max-w-sm mx-auto justify-center items-center">
+          <Block>
+            <button
+              className="flex flex-row items-center justify-center"
+              onClick={handleClick}
+              disabled={dailyClicks >= 100 || hasClaimed}
+            >
+              <h1 className="text-black text-lg font-bold">Press to Earn</h1>
+              <div className="button">
+                <img
+                  src="/tap.jpeg"
+                  alt="Click to Earn"
+                  className="w-40 object-cover rounded-2xl h-36 mb-2"
+                />
+              </div>
+              <h1 className="text-black text-lg font-bold">Tap to Earn</h1>
+            </button>
+            <span className="text-2xl text-black font-bold m-5 p-5">
+              ZUMJI POINTS: {zumjiPoints}
             </span>
           </button>
         </Block>

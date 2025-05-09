@@ -19,12 +19,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FinanceCards from "./cards";
 import FinanceModal from "./sheets(modals)";
+import LottieAnimation from "@/animation/lottie";
+import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
 const Index = () => {
   const { address } = useAccount();
   const router = useRouter();
   const [inTxn, setInTxn] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(false);
 
   const [stakedAmount, setStakedAmount] = useState<any>(0);
   const [zumjiBalance, setZumjiBalance] = useState<any>(0);
@@ -39,29 +40,11 @@ const Index = () => {
   const [unstakeAmount, setUnstakeAmount] = useState("");
   const [repayAmount, setRepayAmount] = useState("");
   const EARLY_UNSTAKING_FEE = 1;
+  const { isPageLoading, isOnboarded } = useGetIsOnboarded();
 
   useEffect(() => {
     getBalances();
   }, []);
-  const getIsOnboarded = async () => {
-    try {
-      const isOnboarded: any = await readContract({
-        address: ZUMJI_CONTRACT,
-        abi: ZUMJI_ABI,
-        functionName: "isUserOnboarded",
-        args: [address],
-      });
-      setIsOnboarded(isOnboarded);
-    } catch (error) {
-      console.error("ISONB: ", error);
-    }
-  };
-
-  useEffect(() => {
-
-    getIsOnboarded();
-
-  }, [address]);
 
   const getBalances = async () => {
     try {
@@ -96,7 +79,7 @@ const Index = () => {
 
   const handleStake = async () => {
     if (!stakeAmount) return toast.error("Please enter a valid amount to unstake");
-    
+
     try {
       setInTxn(true);
 
@@ -235,6 +218,14 @@ const Index = () => {
     }
   };
 
+  if (isPageLoading) {
+    return (
+      <div className="flex items-center justify-center">
+        <LottieAnimation />
+      </div>
+    );
+  }
+
   if (!isOnboarded) {
     return (
       <Layout>
@@ -256,10 +247,9 @@ const Index = () => {
       </Layout>
     );
   }
-  
+
   return (
-    <Layout>
-      <Navbar title={`Zumji >> Finance`} />
+    <Layout subNavBarTitle="Zumji >> Finance">
       <div className="m-5 h-full">
         <Block>
           <div className="flex flex-wrap max-w-auto mx-auto gap-10 justify-center items-center">
@@ -303,7 +293,7 @@ const Index = () => {
       <FinanceModal
         isSheetOpen={stakeSheetOpened}
         onBackdropClick={() => setStakeSheetOpened(false)}
-        onButtonClick={handleUnStake}
+        onButtonClick={handleStake}
         onClose={() => setStakeSheetOpened(false)}
         onInputChange={setStakeAmount}
         opened={stakeSheetOpened}
