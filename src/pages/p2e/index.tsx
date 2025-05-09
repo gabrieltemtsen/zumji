@@ -1,19 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Page,
-  Navbar,
-  Block,
-  Button,
-  Link,
-  Preloader,
-} from "konsta/react";
-import { useAccount } from "wagmi";
-import { readContract, writeContract, waitForTransaction } from "@wagmi/core";
-import Layout from "../Layout";
-import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { readContract, writeContract, waitForTransaction } from '@wagmi/core';
+import { Navbar, Block, Button, Preloader, Link } from 'konsta/react';
+import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+
+import Layout from '../Layout';
+import P2ESwiper from './components/swiper/P2ESwiper';
+import { ZUMJI_ABI, ZUMJI_CONTRACT } from '@/utils/contracts';
+
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
@@ -21,8 +17,9 @@ import P2ESwiper from "./components/swiper/P2ESwiper";
 import LottieAnimation from "@/animation/lottie";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
+const DAILY_LIMIT = 100;
 
-const Index = () => {
+const Index: React.FC = () => {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
   const [clicks, setClicks] = useState(0);
@@ -52,12 +49,32 @@ const Index = () => {
     }
   }, [address]);
 
+  const fetchIsOnboarded = useCallback(async () => {
+    if (!address) return;
+    try {
+      const onboarded: boolean = await readContract({
+        address: ZUMJI_CONTRACT,
+        abi: ZUMJI_ABI,
+        functionName: 'isUserOnboarded',
+        args: [address],
+      });
+      setState((s) => ({ ...s, isOnboarded: onboarded }));
+    } catch (err) {
+      console.error('fetchIsOnboarded', err);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    fetchHasClaimed();
+    fetchIsOnboarded();
+  }, [fetchHasClaimed, fetchIsOnboarded]);
+
+  /* ───────────────────  Midnight reset timer  ─────────────────── */
 
   useEffect(() => {
     const now = new Date();
     const nextMidnight = new Date(now);
     nextMidnight.setHours(24, 0, 0, 0);
-    const timeUntilMidnight = Number(nextMidnight) - Number(now);
 
     const timer = setTimeout(() => {  
 
@@ -66,34 +83,37 @@ const Index = () => {
     }, timeUntilMidnight);
 
     return () => clearTimeout(timer);
-  }, [dailyClicks]);
+  }, [state.dailyClicks]);
+
+  /* ────────────────────────  Handlers  ───────────────────────── */
 
   const handleClick = () => {
-    if (dailyClicks < 100 && !hasClaimed) {
-      setClicks(clicks + 1);
-      setDailyClicks(dailyClicks + 1);
-      setZumjiPoints(zumjiPoints + 1);
-    }
+    if (state.dailyClicks >= DAILY_LIMIT || state.hasClaimed) return;
+
+    setState((s) => ({
+      ...s,
+      clicks: s.clicks + 1,
+      dailyClicks: s.dailyClicks + 1,
+      points: s.points + 1,
+    }));
   };
 
   const handleClaim = async () => {
+    setState((s) => ({ ...s, inTxn: true }));
     try {
-      setInTxn(true);
       const { hash } = await writeContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
-        functionName: "claimDailyPoints",
-        args: [],
+        functionName: 'claimDailyPoints',
       });
       await waitForTransaction({ hash });
-      setClicks(0);
-      setHasClaimed(true);
-      toast.success("Claim successful!");
-    } catch (error) {
-      console.error(error);
-      toast.error("Claim failed!");
+      setState((s) => ({ ...s, clicks: 0, hasClaimed: true }));
+      toast.success('Claim successful!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Claim failed!');
     } finally {
-      setInTxn(false);
+      setState((s) => ({ ...s, inTxn: false }));
     }
   };
 
@@ -149,27 +169,31 @@ const Index = () => {
             <span className="text-2xl text-black font-bold m-5 p-5">
               ZUMJI POINTS: {zumjiPoints}
             </span>
-          </Block>
+          </button>
+        </Block>
 
-          {inTxn ? (<Preloader className="center-item mt-3" />) : (
-            <Button
-              className="my-5 bg-gray-900"
-              onClick={handleClaim}
-              outline
-              disabled={clicks < 100 || inTxn || hasClaimed}
-            >
-              <span className="text-white">Claim Points</span>
-            </Button>
-          )}
+        {state.inTxn ? (
+          <Preloader className="mx-auto" />
+        ) : (
+          <Button
+            className="bg-gray-900"
+            outline
+            onClick={handleClaim}
+            disabled={!canClaim}
+          >
+            <span className="text-white">Claim Points</span>
+          </Button>
+        )}
 
-          {hasClaimed && (
-            <span className="text-red-800">
-              You have already claimed your points for today. Please come back tomorrow.
-            </span>
-          )}
-        </div>
+        {state.hasClaimed && (
+          <span className="block text-center text-red-800">
+            You’ve already claimed today. Come back tomorrow!
+          </span>
+        )}
+
         <P2ESwiper />
       </div>
+
       <ToastContainer />
     </Layout>
   );

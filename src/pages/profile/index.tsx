@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import {
@@ -19,7 +18,7 @@ import { useRouter } from "next/router";
 import LottieAnimation from "@/animation/lottie";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 
-const Index = () => {
+const Index: React.FC = () => {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
   const [username, setUsername] = useState(" ");
@@ -37,9 +36,33 @@ const Index = () => {
     const fetchUsername = async () => {
       try {
         const name: any = await readContract({
+  const router = useRouter();
+
+  const [state, setState] = useState({
+    username: '',
+    newUsername: '',
+    isSheetOpen: false,
+    isOnboarded: false,
+    inTxn: false,
+  });
+
+  /* ────────────────────  Contract helpers  ──────────────────── */
+
+  const fetchProfile = useCallback(async () => {
+    if (!address) return;
+
+    try {
+      const [name, onboarded]: [string, boolean] = await Promise.all([
+        readContract({
           address: ZUMJI_CONTRACT,
           abi: ZUMJI_ABI,
-          functionName: "getUsername",
+          functionName: 'getUsername',
+          args: [address],
+        }),
+        readContract({
+          address: ZUMJI_CONTRACT,
+          abi: ZUMJI_ABI,
+          functionName: 'isUserOnboarded',
           args: [address],
         });
         setUsername(name);
@@ -65,6 +88,12 @@ const Index = () => {
     if (address) {
       fetchUsername();
       fetchProfileImage();
+        }),
+      ]);
+
+      setState((s) => ({ ...s, username: name, isOnboarded: onboarded }));
+    } catch (err) {
+      console.error('fetchProfile', err);
     }
   }, [address]);
 
@@ -73,8 +102,17 @@ const Index = () => {
     setUsernameError("");
   };
 
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /* ─────────────────────  Event handlers  ───────────────────── */
+
+  const handleUsernameInput = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setState((s) => ({ ...s, newUsername: e.target.value }));
+
   const updateUsername = async () => {
-    if (!newUsername) {
+    if (!state.newUsername.trim()) {
       setUsernameError("Username is required");
       return;
     }
@@ -87,13 +125,14 @@ const Index = () => {
     reader.readAsDataURL(profileImage);
     reader.onloadend = async () => {
       const base64Image = reader.result as string;
+
+    setState((s) => ({ ...s, inTxn: true }));
       try {
-        setInTxn(true);
-        const { hash } = await writeContract({
+          const { hash } = await writeContract({
           address: ZUMJI_CONTRACT,
           abi: ZUMJI_ABI,
-          functionName: "updateUsername",
-          args: [newUsername],
+          functionName: 'updateUsername',
+          args: [state.newUsername.trim()],
         });
         await waitForTransaction({ hash });
 
@@ -105,15 +144,22 @@ const Index = () => {
         });
         await waitForTransaction({ hash: imageHash });
 
-        setUsername(newUsername);
+        setState((s) => ({
+        ...s,
+        username: s.newUsername.trim(),
         setRetrievedImage(base64Image);
-        setIsSheetOpen(false);
-      } catch (error) {
-        console.error(error);
+          isSheetOpen: false,
+        newUsername: '',
+      }));
+      } catch (err) {
+        console.error('updateUsername', err);
       } finally {
-        setInTxn(false);
+        setState((s) => ({ ...s, inTxn: false }));
       }
     };
+
+  /* ─────────────────────────  Render  ───────────────────────── */
+
   };
 
   const handleImageChange = (event: any) => {
@@ -137,7 +183,7 @@ const Index = () => {
     );
   }
 
-  if (!isOnboarded) {
+  if  (!state.isOnboarded) {
     return (
       <Layout subNavBarTitle="Zumji >> Profile">
         <div className="m-5 h-full">
@@ -218,6 +264,7 @@ const Index = () => {
         <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
       </div>
 
+      {/* ────────────────  Edit username sheet  ──────────────── */}
       <Sheet
         opened={isSheetOpen}
         onBackdropClick={() => setIsSheetOpen(false)}
