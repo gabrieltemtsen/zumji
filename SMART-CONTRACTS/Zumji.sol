@@ -4,13 +4,16 @@ pragma solidity ^0.8.20;
 import "./IERC20.sol";
 
 contract Zumji {
+    // Use constants for cUSD address to avoid repetition
+    address public constant CUSD_ADDRESS = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
+    
     struct Trader {
         uint256 stakedAmount;
         uint256 zumjiPoints;
         uint256 stakeTimestamp;
         bool isOnboarded;
         string username;
-        string profileImage; // Add profileImage field
+        string profileImage;
         uint256 lastClaimTimestamp;
     }
 
@@ -24,13 +27,17 @@ contract Zumji {
     Advert[] public adverts;
     uint256 public totalStaked;
     uint256 public totalBorrowed;
+    
+    // Constants should be in CAPS and use more precise naming
     uint256 public constant INTEREST_RATE = 10; // 10% interest rate
     uint256 public constant BORROW_RATIO = 2; // Must have staked at least 50% of the amount to borrow
+    uint256 public constant POINTS_PER_CUSD_STAKED = 10; // 10 Zumji points per cUSD staked
+    uint256 public constant POINTS_PER_CUSD_REPAID = 5; // 5 Zumji points per cUSD repaid
     uint256 public constant ZUMJI_TO_CUSD_RATE = 100; // 100 Zumji points = 1 cUSD
-    uint256 public constant LOCK_PERIOD = 30 days; // 30 days lock period
-    uint256 public constant EARLY_UNSTAKE_PENALTY = 1e18; // 1 cUSD penalty for early unstaking
-    uint256 public constant AD_FEE = 1e18; // 1 cUSD fee for posting an ad
-    uint256 public constant DAILY_CLAIM_POINTS = 100; // 100 Zumji points per day for P2E game
+    uint256 public constant LOCK_PERIOD = 30 days;
+    uint256 public constant EARLY_UNSTAKE_PENALTY = 1e18; // 1 cUSD penalty
+    uint256 public constant AD_FEE = 1e18; // 1 cUSD fee
+    uint256 public constant DAILY_CLAIM_POINTS = 100; // 100 Zumji points per day
 
     event Staked(address indexed trader, uint256 amount);
     event Unstaked(address indexed trader, uint256 amount, bool early);
@@ -42,6 +49,12 @@ contract Zumji {
     event UsernameUpdated(address indexed trader, string username);
     event PointsClaimed(address indexed trader, uint256 points);
     event ProfileImageUpdated(address indexed trader, string profileImage);
+
+    IERC20 private immutable cUSD;
+
+    constructor() {
+        cUSD = IERC20(CUSD_ADDRESS);
+    }
 
     modifier onlyOnboarded() {
         require(traders[msg.sender].isOnboarded, "User not onboarded");
@@ -57,7 +70,7 @@ contract Zumji {
             stakeTimestamp: 0,
             isOnboarded: true,
             username: "Zumji OG",
-            profileImage: "", // Initialize profileImage field
+            profileImage: "",
             lastClaimTimestamp: 0
         });
 
@@ -77,6 +90,7 @@ contract Zumji {
     }
 
     function updateUsername(string calldata newUsername) external onlyOnboarded {
+        require(bytes(newUsername).length > 0, "Username cannot be empty");
         traders[msg.sender].username = newUsername;
         emit UsernameUpdated(msg.sender, newUsername);
     }
@@ -87,13 +101,11 @@ contract Zumji {
     }
 
     function stake(uint256 amount) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
-
         require(amount > 0, "Cannot stake 0");
         require(cUSD.transferFrom(msg.sender, address(this), amount), "Deposit failed");
 
         traders[msg.sender].stakedAmount += amount;
-        traders[msg.sender].zumjiPoints += amount / 10; // Example: 10 Zumji points per cUSD staked
+        traders[msg.sender].zumjiPoints += amount * POINTS_PER_CUSD_STAKED;
         traders[msg.sender].stakeTimestamp = block.timestamp;
         totalStaked += amount;
 
@@ -101,24 +113,27 @@ contract Zumji {
     }
 
     function unstake(uint256 amount) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
-
         require(amount > 0, "Cannot unstake 0");
         require(traders[msg.sender].stakedAmount >= amount, "Not enough staked amount");
 
         bool early = block.timestamp < traders[msg.sender].stakeTimestamp + LOCK_PERIOD;
         uint256 penalty = early ? EARLY_UNSTAKE_PENALTY : 0;
-        uint256 zumjiDeduction = early ? amount / 10 : 0;
+        uint256 zumjiDeduction = early ? amount * POINTS_PER_CUSD_STAKED : 0;
 
         if (penalty > 0) {
             require(cUSD.balanceOf(msg.sender) >= penalty, "Insufficient cUSD for penalty");
-            cUSD.transferFrom(msg.sender, address(this), penalty);
+            require(cUSD.transferFrom(msg.sender, address(this), penalty), "Penalty transfer failed");
         }
 
         traders[msg.sender].stakedAmount -= amount;
-        traders[msg.sender].zumjiPoints = traders[msg.sender].zumjiPoints >= zumjiDeduction ? traders[msg.sender].zumjiPoints - zumjiDeduction : 0;
+        if (traders[msg.sender].zumjiPoints >= zumjiDeduction) {
+            traders[msg.sender].zumjiPoints -= zumjiDeduction;
+        } else {
+            traders[msg.sender].zumjiPoints = 0;
+        }
         totalStaked -= amount;
-        cUSD.transfer(msg.sender, amount);
+        
+        require(cUSD.transfer(msg.sender, amount), "Transfer failed");
 
         emit Unstaked(msg.sender, amount, early);
     }
@@ -132,11 +147,17 @@ contract Zumji {
     }
 
     function borrow(uint256 amount) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);  //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
+        require(amount > 0, "Cannot borrow 0");
+        require(
+            traders[msg.sender].stakedAmount >= amount / BORROW_RATIO, 
+            "Must stake at least 50% of the amount to borrow"
+        );
+        require(
+            cUSD.balanceOf(address(this)) >= amount,
+            "Insufficient cUSD in contract"
+        );
 
-        require(traders[msg.sender].stakedAmount >= amount / BORROW_RATIO, "Must stake at least 50% of the amount to borrow");
-
-        cUSD.transfer(msg.sender, amount);
+        require(cUSD.transfer(msg.sender, amount), "Transfer failed");
 
         borrowedAmount[msg.sender] += amount;
         totalBorrowed += amount;
@@ -145,26 +166,26 @@ contract Zumji {
     }
 
     function repay(uint256 amount) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);  //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
-
+        require(amount > 0, "Cannot repay 0");
         require(borrowedAmount[msg.sender] >= amount, "Cannot repay more than borrowed");
 
         uint256 interest = (amount * INTEREST_RATE) / 100;
-        cUSD.transferFrom(msg.sender, address(this), amount + interest);
+        require(
+            cUSD.transferFrom(msg.sender, address(this), amount + interest),
+            "Transfer failed"
+        );
 
         borrowedAmount[msg.sender] -= amount;
         totalBorrowed -= amount;
-        traders[msg.sender].zumjiPoints += amount / 20; // Example: 5 Zumji points per cUSD repaid
+        traders[msg.sender].zumjiPoints += amount * POINTS_PER_CUSD_REPAID;
 
         emit Repaid(msg.sender, amount);
     }
 
     function postAd(string memory cid) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
-
         require(bytes(cid).length > 0, "CID cannot be empty");
         require(cUSD.balanceOf(msg.sender) >= AD_FEE, "Insufficient cUSD for ad fee");
-        cUSD.transferFrom(msg.sender, address(this), AD_FEE);
+        require(cUSD.transferFrom(msg.sender, address(this), AD_FEE), "Transfer failed");
 
         adverts.push(Advert({
             trader: msg.sender,
@@ -175,23 +196,25 @@ contract Zumji {
     }
 
     function redeemZumji(uint256 points) external onlyOnboarded {
-        IERC20 cUSD = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1); //0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1  0x765DE816845861e75A25fCA122bb6898B8B1282a
-
+        require(points > 0, "Cannot redeem 0 points");
         require(traders[msg.sender].zumjiPoints >= points, "Not enough Zumji points");
 
-        uint256 cUSDAmount = points / ZUMJI_TO_CUSD_RATE; // Example: 100 Zumji points = 1 cUSD
+        uint256 cUSDAmount = points / ZUMJI_TO_CUSD_RATE;
         require(cUSD.balanceOf(address(this)) >= cUSDAmount, "Insufficient cUSD in contract");
+        require(cUSD.transfer(msg.sender, cUSDAmount), "Transfer failed");
 
         traders[msg.sender].zumjiPoints -= points;
-        cUSD.transfer(msg.sender, cUSDAmount);
 
         emit ZumjiRedeemed(msg.sender, cUSDAmount);
     }
 
     function claimDailyPoints() external onlyOnboarded {
-        require(block.timestamp >= traders[msg.sender].lastClaimTimestamp + 1 days, "Can only claim once per day");
+        require(
+            block.timestamp >= traders[msg.sender].lastClaimTimestamp + 1 days, 
+            "Can only claim once per day"
+        );
 
-        traders[msg.sender].zumjiPoints += 100;
+        traders[msg.sender].zumjiPoints += DAILY_CLAIM_POINTS;
         traders[msg.sender].lastClaimTimestamp = block.timestamp;
 
         emit PointsClaimed(msg.sender, DAILY_CLAIM_POINTS);
@@ -201,7 +224,14 @@ contract Zumji {
         return block.timestamp < traders[user].lastClaimTimestamp + 1 days;
     }
 
-    receive() external payable {
-        // Handle the received Ether
+    function getAdvertCount() external view returns (uint256) {
+        return adverts.length;
     }
+
+    function getAdvert(uint256 index) external view returns (Advert memory) {
+        require(index < adverts.length, "Index out of bounds");
+        return adverts[index];
+    }
+
+    // Remove receive() if not needed for ETH transfers
 }
