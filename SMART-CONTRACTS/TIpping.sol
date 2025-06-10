@@ -17,20 +17,10 @@ contract ZumjiTipping {
         _;
     }
 
-    // function tipZumjiPoints(address recipient, uint256 points) external onlyOnboarded {
-    //     require(recipient != address(0), "Cannot tip to zero address");
-    //     require(recipient != msg.sender, "Cannot tip yourself");
-    //     require(zumjiContract.isUserOnboarded(recipient), "Recipient not onboarded");
-    //     require(zumjiContract.getZumjiPoints(msg.sender) >= points, "Not enough Zumji points");
-
-    //     // Deduct points from sender
-    //     zumjiContract.redeemZumji(points);
-
-    //     // Add points to recipient
-    //     zumjiContract.claimDailyPointsForUser(recipient, points);
-
-    //     emit Tipped(msg.sender, recipient, points);
-    // }
+    function tipZumjiPoints(address recipient, uint256 points) external onlyOnboarded {
+        zumjiContract.tipZumjiPoints(recipient, points);
+        emit Tipped(msg.sender, recipient, points);
+    }
 
     function getZumjiPoints(address user) external view returns (uint256) {
         return zumjiContract.getZumjiPoints(user);
