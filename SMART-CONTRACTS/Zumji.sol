@@ -48,6 +48,7 @@ contract Zumji {
     event Onboarded(address indexed trader);
     event UsernameUpdated(address indexed trader, string username);
     event PointsClaimed(address indexed trader, uint256 points);
+    event PointsTipped(address indexed from, address indexed to, uint256 points);
     event ProfileImageUpdated(address indexed trader, string profileImage);
 
     IERC20 private immutable cUSD;
@@ -206,6 +207,18 @@ contract Zumji {
         traders[msg.sender].zumjiPoints -= points;
 
         emit ZumjiRedeemed(msg.sender, cUSDAmount);
+    }
+
+    function tipZumjiPoints(address recipient, uint256 points) external onlyOnboarded {
+        require(recipient != address(0), "Cannot tip to zero address");
+        require(recipient != msg.sender, "Cannot tip yourself");
+        require(traders[recipient].isOnboarded, "Recipient not onboarded");
+        require(traders[msg.sender].zumjiPoints >= points, "Not enough Zumji points");
+
+        traders[msg.sender].zumjiPoints -= points;
+        traders[recipient].zumjiPoints += points;
+
+        emit PointsTipped(msg.sender, recipient, points);
     }
 
     function claimDailyPoints() external onlyOnboarded {
