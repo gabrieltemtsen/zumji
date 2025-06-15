@@ -24,6 +24,7 @@ import AnimateFromLeft from "@/animation/animate-from-left";
 import AnimateFromRight from "@/animation/animate-from-right";
 import AnimateFromBottom from "@/animation/animate-from-bottom";
 import { homeBackground } from "@/constants/images";
+import Features from "@/components/home/Features";
 
 export default function Home() {
   const { address } = useAccount();
@@ -132,6 +133,9 @@ export default function Home() {
             </AnimateFromBottom>
           </div>
         </section>
+      </div>
+      <div className="py-12 bg-black">
+        <Features />
       </div>
       <ToastContainer />
     </Layout>
