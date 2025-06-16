@@ -58,7 +58,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         {/* Navbar */}
         <Navbar
           title="Zumji"
-          titleClassName="text-md md:text-xl lg:text-2xl "
+          titleClassName="text-md md:text-xl lg:text-2xl logo-font"
           right={<CustomConnectButton />}
           left={
             <Link href='/' className="" >
@@ -78,8 +78,8 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         <div className="normalHeight">{children}</div>
 
         {/* Footer Navigation */}
-        <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200">
-          <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+        <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200 md:static md:h-auto">
+          <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium md:max-w-none md:flex md:justify-center">
             {isOnboarded && isConnected && navItems.map((item) => (
               <NavItem key={item.label} {...item} />
             ))}

@@ -91,3 +91,7 @@ body {
 .button:hover .normal {
   display: none;
 }
+
+.logo-font {
+  @apply font-logo;
+}

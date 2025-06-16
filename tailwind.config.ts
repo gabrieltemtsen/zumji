@@ -16,6 +16,9 @@ module.exports = konstaConfig({
         'yellow-gradient-start': '#FFD700',
         'yellow-gradient-end': '#FFA500',
       },
+      fontFamily: {
+        logo: ['"Orbitron"', 'sans-serif'],
+      },
       animation: {
         'star-move': 'starMove 30s linear infinite',
       },
