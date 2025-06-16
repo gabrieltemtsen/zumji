@@ -11,6 +11,10 @@ export default function Document() {
         <meta name="description" content={metaDataDescription} />
         <link rel="icon" href={zumjiLogo} />
         <link rel="apple-touch-icon" href={zumjiLogo} />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap"
+          rel="stylesheet"
+        />
         <meta property="og:title" content="Zumji" />
         <meta property="og:description" content={metaDataDescription} />
         <meta property="og:image" content={oGImage} />
