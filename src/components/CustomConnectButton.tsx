@@ -43,14 +43,7 @@ export const CustomConnectButton = () => {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    style={{
-                      backgroundColor: '#a16207',
-                      color: 'white',
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      cursor: 'pointer',
-                    }}
+                    className="px-4 py-2 rounded-full text-white font-semibold bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 shadow-lg hover:opacity-90"
                   >
                     Connect Wallet
                   </button>

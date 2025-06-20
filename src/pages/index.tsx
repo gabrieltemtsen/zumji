@@ -125,7 +125,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={handleOnboard}
-                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-yellow-700 rounded-full shadow-lg hover:bg-yellow-800 focus:ring-2 focus:ring-yellow-600"
+                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white rounded-full shadow-lg bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 hover:opacity-90 focus:ring-2 focus:ring-yellow-600"
                     disabled={inTxn}
                   >
                     {inTxn ? <Preloader className="mt-3" /> : "Join Zumji"}
