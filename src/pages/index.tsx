@@ -101,13 +101,15 @@ export default function Home() {
               />
             </a>
             <AnimateFromRight>
-              <h1 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight lg:text-6xl">
-                Transform Your Business with Zumji: Loyalty, Rewards, and More
+              <h1
+                className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight lg:text-6xl bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+              >
+                Supercharge Your Business with Zumji’s Reward Revolution
               </h1>
             </AnimateFromRight>
             <AnimateFromLeft>
-              <p className="mb-8 text-md sm:text-lg md:text-xl font-normal text-white sm:px-16 xl:px-48">
-                Empowering SMEs with Staking, Borrowing, and Innovative Rewards on Celo
+              <p className="mb-8 text-md sm:text-lg md:text-xl font-medium text-gray-200 sm:px-16 xl:px-48">
+                Dive into staking, borrowing and thrilling incentives—all powered by Celo
               </p>
             </AnimateFromLeft>
             <AnimateFromBottom>
@@ -123,7 +125,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={handleOnboard}
-                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-yellow-700 rounded-full shadow-lg hover:bg-yellow-800 focus:ring-2 focus:ring-yellow-600"
+                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white rounded-full shadow-lg bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 hover:opacity-90 focus:ring-2 focus:ring-yellow-600"
                     disabled={inTxn}
                   >
                     {inTxn ? <Preloader className="mt-3" /> : "Join Zumji"}
