@@ -2,8 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "./IERC20.sol";
+import "./Owned.sol";
+import "./SafeERC20.sol";
 
-contract Zumji {
+contract Zumji is Owned {
+    using SafeERC20 for IERC20;
     // Use constants for cUSD address to avoid repetition
     address public constant CUSD_ADDRESS = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
     
@@ -28,13 +31,13 @@ contract Zumji {
     uint256 public totalStaked;
     uint256 public totalBorrowed;
     
-    // Constants should be in CAPS and use more precise naming
-    uint256 public constant INTEREST_RATE = 10; // 10% interest rate
-    uint256 public constant BORROW_RATIO = 2; // Must have staked at least 50% of the amount to borrow
+    // Adjustable parameters managed by the contract owner
+    uint256 public interestRate = 10; // 10% interest rate
+    uint256 public borrowRatio = 2; // Must have staked at least 50% of the amount to borrow
     uint256 public constant POINTS_PER_CUSD_STAKED = 10; // 10 Zumji points per cUSD staked
     uint256 public constant POINTS_PER_CUSD_REPAID = 5; // 5 Zumji points per cUSD repaid
     uint256 public constant ZUMJI_TO_CUSD_RATE = 100; // 100 Zumji points = 1 cUSD
-    uint256 public constant LOCK_PERIOD = 30 days;
+    uint256 public lockPeriod = 30 days;
     uint256 public constant EARLY_UNSTAKE_PENALTY = 1e18; // 1 cUSD penalty
     uint256 public constant AD_FEE = 1e18; // 1 cUSD fee
     uint256 public constant DAILY_CLAIM_POINTS = 100; // 100 Zumji points per day
@@ -103,7 +106,7 @@ contract Zumji {
 
     function stake(uint256 amount) external onlyOnboarded {
         require(amount > 0, "Cannot stake 0");
-        require(cUSD.transferFrom(msg.sender, address(this), amount), "Deposit failed");
+        cUSD.safeTransferFrom(msg.sender, address(this), amount);
 
         traders[msg.sender].stakedAmount += amount;
         traders[msg.sender].zumjiPoints += amount * POINTS_PER_CUSD_STAKED;
@@ -117,13 +120,13 @@ contract Zumji {
         require(amount > 0, "Cannot unstake 0");
         require(traders[msg.sender].stakedAmount >= amount, "Not enough staked amount");
 
-        bool early = block.timestamp < traders[msg.sender].stakeTimestamp + LOCK_PERIOD;
+        bool early = block.timestamp < traders[msg.sender].stakeTimestamp + lockPeriod;
         uint256 penalty = early ? EARLY_UNSTAKE_PENALTY : 0;
         uint256 zumjiDeduction = early ? amount * POINTS_PER_CUSD_STAKED : 0;
 
         if (penalty > 0) {
             require(cUSD.balanceOf(msg.sender) >= penalty, "Insufficient cUSD for penalty");
-            require(cUSD.transferFrom(msg.sender, address(this), penalty), "Penalty transfer failed");
+            cUSD.safeTransferFrom(msg.sender, address(this), penalty);
         }
 
         traders[msg.sender].stakedAmount -= amount;
@@ -134,7 +137,7 @@ contract Zumji {
         }
         totalStaked -= amount;
         
-        require(cUSD.transfer(msg.sender, amount), "Transfer failed");
+        cUSD.safeTransfer(msg.sender, amount);
 
         emit Unstaked(msg.sender, amount, early);
     }
@@ -150,7 +153,7 @@ contract Zumji {
     function borrow(uint256 amount) external onlyOnboarded {
         require(amount > 0, "Cannot borrow 0");
         require(
-            traders[msg.sender].stakedAmount >= amount / BORROW_RATIO, 
+            traders[msg.sender].stakedAmount >= amount / borrowRatio,
             "Must stake at least 50% of the amount to borrow"
         );
         require(
@@ -158,7 +161,7 @@ contract Zumji {
             "Insufficient cUSD in contract"
         );
 
-        require(cUSD.transfer(msg.sender, amount), "Transfer failed");
+        cUSD.safeTransfer(msg.sender, amount);
 
         borrowedAmount[msg.sender] += amount;
         totalBorrowed += amount;
@@ -170,11 +173,8 @@ contract Zumji {
         require(amount > 0, "Cannot repay 0");
         require(borrowedAmount[msg.sender] >= amount, "Cannot repay more than borrowed");
 
-        uint256 interest = (amount * INTEREST_RATE) / 100;
-        require(
-            cUSD.transferFrom(msg.sender, address(this), amount + interest),
-            "Transfer failed"
-        );
+        uint256 interest = (amount * interestRate) / 100;
+        cUSD.safeTransferFrom(msg.sender, address(this), amount + interest);
 
         borrowedAmount[msg.sender] -= amount;
         totalBorrowed -= amount;
@@ -186,7 +186,7 @@ contract Zumji {
     function postAd(string memory cid) external onlyOnboarded {
         require(bytes(cid).length > 0, "CID cannot be empty");
         require(cUSD.balanceOf(msg.sender) >= AD_FEE, "Insufficient cUSD for ad fee");
-        require(cUSD.transferFrom(msg.sender, address(this), AD_FEE), "Transfer failed");
+        cUSD.safeTransferFrom(msg.sender, address(this), AD_FEE);
 
         adverts.push(Advert({
             trader: msg.sender,
@@ -202,7 +202,7 @@ contract Zumji {
 
         uint256 cUSDAmount = points / ZUMJI_TO_CUSD_RATE;
         require(cUSD.balanceOf(address(this)) >= cUSDAmount, "Insufficient cUSD in contract");
-        require(cUSD.transfer(msg.sender, cUSDAmount), "Transfer failed");
+        cUSD.safeTransfer(msg.sender, cUSDAmount);
 
         traders[msg.sender].zumjiPoints -= points;
 
@@ -244,6 +244,31 @@ contract Zumji {
     function getAdvert(uint256 index) external view returns (Advert memory) {
         require(index < adverts.length, "Index out of bounds");
         return adverts[index];
+    }
+
+    // --- Owner functions ---
+    event ParametersUpdated(uint256 newInterestRate, uint256 newBorrowRatio, uint256 newLockPeriod);
+    event FeesWithdrawn(address indexed to, uint256 amount);
+
+    function setInterestRate(uint256 newRate) external onlyOwner {
+        interestRate = newRate;
+        emit ParametersUpdated(newRate, borrowRatio, lockPeriod);
+    }
+
+    function setBorrowRatio(uint256 newRatio) external onlyOwner {
+        borrowRatio = newRatio;
+        emit ParametersUpdated(interestRate, newRatio, lockPeriod);
+    }
+
+    function setLockPeriod(uint256 newPeriod) external onlyOwner {
+        lockPeriod = newPeriod;
+        emit ParametersUpdated(interestRate, borrowRatio, newPeriod);
+    }
+
+    function withdrawCUSD(address to, uint256 amount) external onlyOwner {
+        require(to != address(0), "Zero address");
+        cUSD.safeTransfer(to, amount);
+        emit FeesWithdrawn(to, amount);
     }
 
     // Remove receive() if not needed for ETH transfers
