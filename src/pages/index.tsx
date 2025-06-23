@@ -15,7 +15,13 @@ import {
 import Layout from "./Layout";
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import { ZUMJI_ABI, ZUMJI_CONTRACT } from "@/utils/contracts";
+import {
+  ZUMJI_ABI,
+  ZUMJI_CONTRACT,
+  USDT_ABI,
+  USDT_CONTRACT_ADDRESS,
+} from "@/utils/contracts";
+import { ethers } from "ethers";
 import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -34,6 +40,17 @@ export default function Home() {
   const handleOnboard = async () => {
     try {
       setInTxn(true);
+      const balance: any = await readContract({
+        address: USDT_CONTRACT_ADDRESS,
+        abi: USDT_ABI,
+        functionName: "balanceOf",
+        args: [address],
+      });
+      if (ethers.BigNumber.from(balance).lte(0)) {
+        toast.error("Insufficient cUSD balance to onboard");
+        setInTxn(false);
+        return;
+      }
       const tx = await writeContract({
         address: ZUMJI_CONTRACT,
         abi: ZUMJI_ABI,
