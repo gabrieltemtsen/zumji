@@ -89,10 +89,14 @@ export default function Home() {
   return (
     <Layout>
       <div
-        className="h-[90vh]"
+        className="relative h-[90vh] overflow-hidden"
         style={{ backgroundImage: `url(${homeBackground})` }}
       >
-        <section className="bg-gradient-to-b from-yellow-700/10 via-yellow-800 h-full">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black" />
+        <div
+          className="absolute inset-0 opacity-40 bg-[url('/stars.png')] bg-repeat-x animate-star-move"
+        />
+        <section className="relative z-10 flex items-center h-full">
           <div className="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
             <a
               href="https://celo.org"
@@ -119,7 +123,7 @@ export default function Home() {
             </a>
             <AnimateFromRight>
               <h1
-                className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight lg:text-6xl bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+                className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight lg:text-6xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text text-transparent"
               >
                 Supercharge Your Business with Zumji’s Reward Revolution
               </h1>
@@ -134,7 +138,7 @@ export default function Home() {
                 {isOnboarded ? (
                   <Link
                     href="/finance"
-                    className="mt-6 max-w-md inline-flex items-center justify-center px-5 py-2 sm:px-4 sm:py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 text-xs sm:text-sm md:text-md lg:text-lg font-medium text-white bg-gray-600 rounded-full shadow-lg hover:shadow-black focus:ring-2 focus:ring-yellow-600"
+                    className="mt-6 max-w-md inline-flex items-center justify-center px-5 py-2 sm:px-4 sm:py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 text-xs sm:text-sm md:text-md lg:text-lg font-medium text-white bg-gray-600 rounded-full shadow-lg hover:shadow-black focus:ring-2 focus:ring-green-600"
                   >
                     Stats
                     <FaChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-2 " />
@@ -142,7 +146,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={handleOnboard}
-                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white rounded-full shadow-lg bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 hover:opacity-90 focus:ring-2 focus:ring-yellow-600"
+                    className="mt-6 max-w-md inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white rounded-full shadow-lg bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 hover:opacity-90 focus:ring-2 focus:ring-green-600"
                     disabled={inTxn}
                   >
                     {inTxn ? <Preloader className="mt-3" /> : "Join Zumji"}
