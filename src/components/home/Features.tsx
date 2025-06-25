@@ -28,7 +28,10 @@ const features = [
 const Features = () => (
   <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
     {features.map((feature) => (
-      <div key={feature.title} className="text-center text-white px-4">
+      <div
+        key={feature.title}
+        className="text-center text-white p-4 rounded-xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-lg hover:bg-white/10 transition"
+      >
         {feature.icon}
         <h3 className="font-semibold mb-1">{feature.title}</h3>
         <p className="text-sm text-gray-300">{feature.description}</p>
