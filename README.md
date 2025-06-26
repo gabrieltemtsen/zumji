@@ -60,6 +60,15 @@ Zumji is a dynamic platform tailored for small and medium-sized enterprises (SME
 2. Convert Zumji points to cUSD.
 3. Receive cUSD in wallet.'
 
+## How It Works
+
+1. **Connect Wallet** - Users begin by connecting a compatible Celo wallet to the platform.
+2. **Stake cUSD** - Traders deposit cUSD to start earning Zumji points and unlock borrowing power.
+3. **Borrow Funds** - Up to 50% of the staked amount can be borrowed for business operations.
+4. **Promote Products** - Pay ad fees in cUSD to display ads and reach potential customers.
+5. **Send Tips or Gifts** - Transfer Zumji points to others via email for community engagement.
+6. **Redeem Rewards** - Convert accumulated points back to cUSD at any time.
+
 ## NEXT FEATURES 
 - Mobile responsitivity _(Mobile FIRST)
 - Landing page (to fit multi-platforms)
@@ -120,6 +129,24 @@ To set up the Zumji project, follow these steps:
 For any further questions or inquiries about Zumji, please feel free to reach out to our team. We are committed to providing a transparent and efficient marketplace experience for our users.
 
 *Note: This ReadMe provides a high-level overview of Zumji's features and technology stack. For detailed technical documentation and instructions, please refer to the respective repositories and documentation of the technologies used in the project.*
+
+## FAQs
+
+**Q: What blockchain does Zumji run on?**
+
+Zumji is built on the Celo blockchain, enabling fast and low-cost transactions.
+
+**Q: Can I borrow cUSD without staking?**
+
+No. Borrowing is only available after staking cUSD, which determines your borrowing limit.
+
+**Q: How do I earn Zumji points?**
+
+Points are accrued by staking cUSD, borrowing and repaying with interest, and participating in community activities.
+
+**Q: How can I redeem my points?**
+
+You can convert accumulated Zumji points back to cUSD directly within the platform.
 
 
 
