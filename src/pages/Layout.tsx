@@ -10,7 +10,8 @@ import { getAccount } from "@wagmi/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
-import { home, finance, p2e, profile } from "@/constants/urls/urls";
+import { home, finance, p2e, profile, stats } from "@/constants/urls/urls";
+import { FaChartBar } from "react-icons/fa6";
 import Image from "next/image";
 import { zumjiLogo } from "@/constants/images";
 import ZumjiLogo from "@/components/logo/Logo";
@@ -29,6 +30,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
     { label: "Home", icon: IoIosHome, href: home },
     { label: "Finance", icon: SiCoinmarketcap, href: finance },
     { label: "P2E", icon: RiBillLine, href: p2e },
+    { label: "Stats", icon: FaChartBar, href: stats },
     { label: "Profile", icon: RxAvatar, href: profile },
   ];
 
@@ -79,7 +81,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
 
         {/* Footer Navigation */}
         <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-black border-t border-gray-200 md:static md:h-auto">
-          <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium md:max-w-none md:flex md:justify-center">
+          <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium md:max-w-none md:flex md:justify-center">
             {isOnboarded && isConnected && navItems.map((item) => (
               <NavItem key={item.label} {...item} />
             ))}
