@@ -25,7 +25,7 @@ import { ethers } from "ethers";
 import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaChevronDown } from "react-icons/fa";
 import AnimateFromLeft from "@/animation/animate-from-left";
 import AnimateFromRight from "@/animation/animate-from-right";
 import AnimateFromBottom from "@/animation/animate-from-bottom";
@@ -82,6 +82,16 @@ export default function Home() {
     }
   };
 
+  const scrollToFeatures = () => {
+    const featuresSection = document.getElementById('features-section');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   useEffect(() => {
     if (address) fetchOnboardStatus();
   }, [address]);
@@ -89,13 +99,17 @@ export default function Home() {
   return (
     <Layout>
       <div
-        className="relative h-[90vh] overflow-hidden"
-        style={{ backgroundImage: `url(${homeBackground})` }}
+        className="relative h-screen overflow-hidden"
+        style={{
+          backgroundImage: `url(${homeBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black" />
-        <div
-          className="absolute inset-0 opacity-40 bg-[url('/stars.png')] bg-repeat-x animate-star-move"
-        />
+        {/* Improved gradient overlay for better blending */}
+        <div className="absolute h-full inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90" />
+
         <section className="relative z-10 flex items-center h-full">
           <div className="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
             <a
@@ -125,7 +139,7 @@ export default function Home() {
               <h1
                 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight lg:text-6xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text text-transparent"
               >
-                Supercharge Your Business with Zumji’s Reward Revolution
+                Supercharge Your Business with Zumji&apos;s Reward Revolution
               </h1>
             </AnimateFromRight>
             <AnimateFromLeft>
@@ -156,10 +170,31 @@ export default function Home() {
             </AnimateFromBottom>
           </div>
         </section>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          <button
+            onClick={scrollToFeatures}
+            className="flex flex-col items-center text-white/70 hover:text-white transition-colors duration-300 group"
+          >
+            <span className="text-sm mb-2 opacity-75">Explore Features</span>
+            <div className="animate-bounce">
+              <FaChevronDown className="w-4 h-4 group-hover:w-5 group-hover:h-5 transition-all duration-300" />
+            </div>
+          </button>
+        </div>
       </div>
-      <div className="py-12 bg-black">
+
+      {/* Features section with smooth transition */}
+      <div
+        id="features-section"
+        className="relative bg-gradient-to-b from-black via-gray-900 to-black py-16"
+      >
+        {/* Subtle top border for visual separation */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
         <Features />
       </div>
+
       <ToastContainer />
     </Layout>
   );
