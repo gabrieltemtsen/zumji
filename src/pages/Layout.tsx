@@ -12,8 +12,6 @@ import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
 import { home, finance, p2e, profile, stats } from "@/constants/urls/urls";
 import { FaChartBar } from "react-icons/fa6";
-import Image from "next/image";
-import { zumjiLogo } from "@/constants/images";
 import ZumjiLogo from "@/components/logo/Logo";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 import { useConnectState } from "@/hooks/use-connect/useConnect";
@@ -41,7 +39,6 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
     }
   }, []);
 
-  // Calculate proper padding based on navigation visibility
   const shouldShowBottomNav = isOnboarded && isConnected;
   const topPadding = subNavBarTitle ? 'pt-32' : 'pt-16';
   const bottomPadding = shouldShowBottomNav ? 'pb-20' : 'pb-4';
@@ -55,12 +52,9 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
           : "text-gray-300 hover:text-white"
       }`}
     >
-      {/* Active indicator */}
       {pathName === href && (
         <div className="absolute -top-0.5 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full shadow-lg shadow-yellow-400/30" />
       )}
-      
-      {/* Icon with background glow effect */}
       <div className={`relative p-2 rounded-xl transition-all duration-300 ${
         pathName === href 
           ? "bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 shadow-lg shadow-yellow-400/20" 
@@ -72,8 +66,6 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
             : "text-gray-300 group-hover:text-white group-hover:scale-110"
         }`} />
       </div>
-      
-      {/* Label */}
       <span className={`mt-1 text-xs font-medium transition-all duration-300 ${
         pathName === href 
           ? "text-yellow-400 font-semibold" 
@@ -85,8 +77,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
   );
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Fixed Header */}
+    <div className="flex flex-col h-screen bg-black">
       <div className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-gray-800/50 shadow-xl">
         <div className="px-4 sm:px-6 lg:px-8">
           <Navbar
@@ -110,7 +101,6 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         </div>
       </div>
 
-      {/* Sub Navigation */}
       {subNavBarTitle && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-black/80 backdrop-blur-lg border-b border-gray-800/30">
           <div className="px-4 sm:px-6 lg:px-8">
@@ -128,13 +118,10 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         </div>
       )}
 
-      {/* Main Content with proper scroll handling */}
-      <div className={`relative ${topPadding} ${bottomPadding}`}>
-        {/* Remove container constraints that might interfere with scrolling */}
+      <div className={`flex-1 overflow-y-auto ${topPadding} ${bottomPadding} scroll-smooth`}>
         {children}
       </div>
 
-      {/* Fixed Footer Navigation */}
       {shouldShowBottomNav && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-gray-800/50 shadow-2xl">
           <div className="px-4 sm:px-6 lg:px-8">
@@ -149,7 +136,6 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         </div>
       )}
 
-      {/* Gradient Overlay for Visual Appeal */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-yellow-400/5 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-yellow-400/5 to-transparent" />
