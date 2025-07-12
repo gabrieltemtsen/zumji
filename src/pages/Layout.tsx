@@ -10,8 +10,9 @@ import { getAccount } from "@wagmi/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
-import { home, finance, p2e, profile, stats } from "@/constants/urls/urls";
+import { home, finance, p2e, profile, stats, cube } from "@/constants/urls/urls";
 import { FaChartBar } from "react-icons/fa6";
+import { FaCube } from "react-icons/fa";
 import ZumjiLogo from "@/components/logo/Logo";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 import { useConnectState } from "@/hooks/use-connect/useConnect";
@@ -29,6 +30,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
     { label: "Finance", icon: SiCoinmarketcap, href: finance },
     { label: "P2E", icon: RiBillLine, href: p2e },
     { label: "Stats", icon: FaChartBar, href: stats },
+    { label: "Cube", icon: FaCube, href: cube },
     { label: "Profile", icon: RxAvatar, href: profile },
   ];
 
