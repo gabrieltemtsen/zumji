@@ -1,7 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
-const Cube: React.FC = () => {
+interface CubeProps {
+  onCubeClick?: () => void;
+}
+
+const Cube: React.FC<CubeProps> = ({ onCubeClick }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
 
@@ -24,6 +28,9 @@ const Cube: React.FC = () => {
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(3, 3, 3);
     scene.add(light);
@@ -39,6 +46,20 @@ const Cube: React.FC = () => {
 
     animate();
 
+    const handleClick = (event: MouseEvent) => {
+      if (!canvasRef.current) return;
+      const rect = canvasRef.current.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(cube);
+      if (intersects.length > 0) {
+        onCubeClick?.();
+      }
+    };
+
+    canvasRef.current.addEventListener('click', handleClick);
+
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -51,6 +72,7 @@ const Cube: React.FC = () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       renderer.dispose();
       window.removeEventListener('resize', handleResize);
+      canvasRef.current?.removeEventListener('click', handleClick);
     };
   }, []);
 
