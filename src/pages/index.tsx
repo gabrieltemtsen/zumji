@@ -105,7 +105,7 @@ export default function Home() {
       </div>
 
       {/* Scrollable Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 px-10 sm:px-16 lg:px-24 xl:px-32 py-8"> 
         {/* Hero Section */}
         <section className="relative flex items-center min-h-screen">
           <div className="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
