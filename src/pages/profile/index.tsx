@@ -151,7 +151,8 @@ const Profile: React.FC = () => {
       <div className="m-5">
         <Block>
           <div className="max-w-sm mx-auto">
-            <div className="w-full max-w-sm rounded-lg shadow bg-gray-800 border-gray-700">
+            <div className="w-full max-w-sm rounded-xl p-[2px] bg-gradient-to-br from-yellow-400/30 to-yellow-600/30 shadow-lg">
+              <div className="rounded-lg bg-gray-800/90 backdrop-blur-lg">
               <div className="flex justify-end px-4 pt-4">
                 <button
                   onClick={() => setIsSheetOpen(true)}
@@ -168,7 +169,7 @@ const Profile: React.FC = () => {
               </div>
               <div className="flex flex-col items-center pb-10">
                 <img
-                  className="w-24 h-24 mb-3 rounded-full shadow-lg"
+                  className="w-24 h-24 mb-3 rounded-full shadow-lg ring-2 ring-yellow-500/60"
                   src={
                     (retrievedImage as string) ||
                     (imagePreview as string) ||
@@ -176,14 +177,14 @@ const Profile: React.FC = () => {
                   }
                   alt="profile"
                 />
-                <h5 className="mb-1 text-xl font-medium text-white">
+                <h5 className="mb-1 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
                   {username}
                 </h5>
                 <span className="text-sm text-gray-400">Entrepreneur</span>
                 <div className="flex mt-4">
                   <button
                     onClick={() => setIsSheetOpen(true)}
-                    className="px-4 py-2 text-sm text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                    className="px-4 py-2 text-sm font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg hover:from-yellow-500 hover:to-yellow-700"
                   >
                     Edit Profile
                   </button>
@@ -196,6 +197,7 @@ const Profile: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </Block>
       </div>
