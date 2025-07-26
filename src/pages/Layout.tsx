@@ -128,7 +128,7 @@ const Layout = ({ subNavBarTitle, children }: { subNavBarTitle?: string, childre
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-gray-800/50 shadow-2xl">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="max-w-md mx-auto">
-              <div className="flex justify-between items-center h-16">
+              <div className="flex justify-between items-center h-16 text-white">
                 {navItems.map((item) => (
                   <NavItem key={item.label} {...item} />
                 ))}
