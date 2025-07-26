@@ -271,7 +271,7 @@ export default function Home() {
 
             {referralPoints !== undefined && (
               <p className="text-sm text-green-400 mb-2">
-                You've earned <strong>{Number(referralPoints)}</strong> points!
+               You&apos;ve earned <strong>{Number(referralPoints)}</strong> points!
               </p>
             )}
 
