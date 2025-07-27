@@ -2,13 +2,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import {
-  Page,
-  Navbar,
-  Block,
-  Button,
-  List,
-  ListItem,
-  BlockTitle,
   Preloader,
   Chip,
   Icon,
@@ -26,7 +19,6 @@ import { ethers } from "ethers";
 import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { FaChevronRight, FaChevronDown } from "react-icons/react-icons/fa";
 import AnimateFromLeft from "@/animation/animate-from-left";
 import AnimateFromRight from "@/animation/animate-from-right";
 import AnimateFromBottom from "@/animation/animate-from-bottom";
@@ -50,9 +42,6 @@ export default function Home() {
   useEffect(() => {
     setHasMounted(true);
   }, []);
-
-
-
 
   const { data: referralPoints } = useContractRead({
     address: ZUMJI_REFERRAL_ADDRESS,
@@ -84,9 +73,6 @@ export default function Home() {
       console.error("Referral error:", error);
     }
   };
-
-
-
 
   const handleOnboard = async () => {
     try {
@@ -214,6 +200,8 @@ export default function Home() {
                 powered by Celo
               </p>
             </AnimateFromLeft>
+
+            
             <AnimateFromBottom>
               <div className="flex justify-center space-x-4 mb-8 lg:mb-16">
                 {isOnboarded ? (
@@ -238,7 +226,7 @@ export default function Home() {
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute bottom-40 lg:bottom-14 left-1/2 transform -translate-x-1/2 z-10">
             <button
               onClick={scrollToFeatures}
               className="flex flex-col items-center text-white/70 hover:text-white transition-colors duration-300 group backdrop-blur-sm"
@@ -278,13 +266,13 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-4">
               <input
                 readOnly
-                value={`https://zumji.app/ref/${address}`}
+                value={`https://zumji.vercel.app/ref/${address}`}
                 className="flex-1 px-3 py-2 rounded-lg text-sm bg-black/30 text-white border border-gray-600"
               />
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `https://zumji.app/ref/${address}`
+                    `https://zumji.vercel.app/ref/${address}`
                   );
                   toast.success("Referral link copied!");
                 }}
