@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Page, Navbar, Icon } from 'konsta/react';
+import { Navbar} from 'konsta/react';
 import { IoIosHome } from "react-icons/io";
 import { RiBillLine } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";

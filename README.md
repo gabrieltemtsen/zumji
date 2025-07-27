@@ -92,33 +92,33 @@ To set up the Zumji project, follow these steps:
     cd zumji
     ```
 
-3. **Set up the Next.js project with TypeScript:**
-
-    If you don't have `create-next-app` installed, you can install it globally:
-
-    ```bash
-    npm install -g create-next-app
-    ```
-
-4. **Create a new Next.js project with TypeScript:**
-
-    ```bash
-    npx create-next-app@latest . --ts
-    ```
-
-    This command initializes a new Next.js project with TypeScript in the current directory.
-
-5. **Install the dependencies:**
+3. **Install the dependencies:**
 
     ```bash
     npm install
     ```
 
-6. **Run the application:**
+4. **Run the application:**
 
     ```bash
     npm run dev
     ```
+
+
+## 📄 Smart Contracts
+
+Zumji's smart contracts are written in **Solidity** and live in the [`SMART-CONTRACTS`](./SMART-CONTRACTS) folder.
+
+To learn how to:
+- Compile the contracts
+- Deploy to the Celo blockchain
+- Run tests
+- Interact with the contracts locally or via scripts
+
+👉 **Please read the [README](./SMART-CONTRACTS/README.md) inside the `SMART-CONTRACTS` folder.**
+
+
+
 
 ## Future Development:
 
@@ -147,6 +147,9 @@ Points are accrued by staking cUSD, borrowing and repaying with interest, and pa
 **Q: How can I redeem my points?**
 
 You can convert accumulated Zumji points back to cUSD directly within the platform.
+
+
+
 
 
 
